@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Entry point Claude Code invokes for each hook event on macOS/Linux.
-# Bash port of MarkplaneInstaller/hooks/Invoke-MarkplaneClaudeHook.ps1.
+# Bash port of packages/agent-adapters/hooks/Invoke-MarkplaneClaudeHook.ps1.
 #
 # Usage:
 #   invoke-markplane-claude-hook.sh --event SessionStart --markplane-exe /path/to/markplane \

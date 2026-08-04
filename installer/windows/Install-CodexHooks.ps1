@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$InstallDir = "$env:LOCALAPPDATA\Programs\Markplane",
+    [string]$InstallDir = "$env:LOCALAPPDATA\Programs\ResearchWithCodingAgents",
     [string]$HooksPath = (Join-Path $HOME ".codex\hooks.json"),
     [int]$MaxContextChars = 6000,
     [switch]$Uninstall
@@ -255,7 +255,7 @@ function Update-CodexMarkplaneHooks {
 }
 
 function Remove-MarkplaneCodexHookState {
-    $stateRoot = Join-Path $env:LOCALAPPDATA "Markplane\codex-hooks\sessions"
+    $stateRoot = Join-Path $env:LOCALAPPDATA "ResearchWithCodingAgents\codex-hooks\sessions"
     if (Test-Path -LiteralPath $stateRoot -PathType Container) {
         Remove-Item -LiteralPath $stateRoot -Recurse -Force
     }

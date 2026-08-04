@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
     [string]$ProjectRoot = (Get-Location).Path,
-    [string]$MarkplaneExe = "$env:LOCALAPPDATA\Programs\Markplane\markplane.exe",
+    [string]$MarkplaneExe = "$env:LOCALAPPDATA\Programs\ResearchWithCodingAgents\markplane.exe",
     [switch]$Uninstall
 )
 

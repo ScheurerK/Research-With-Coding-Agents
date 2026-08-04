@@ -43,7 +43,7 @@ Add concise public docs that state the product name, Windows-first install path,
 Run: `Invoke-Pester .\tests\RwcaDistributionReadiness.Tests.ps1 -Output Detailed`
 Expected: PASS.
 - [ ] **Step 5: Sync Markplane**
-Run: `C:\Users\scheurer\.cargo\bin\markplane.exe sync`
+Run: `markplane sync`
 Expected: command exits `0`.
 ### Task 2: License And Provenance Gate
 **Files:**
@@ -153,9 +153,9 @@ Expected: PASS.
 Run: `Invoke-Pester .\installer\windows\tests,.\tests -Output Detailed`
 Expected: PASS.
 - [ ] **Step 2: Run Markplane consistency checks**
-Run: `C:\Users\scheurer\.cargo\bin\markplane.exe sync`
+Run: `markplane sync`
 Expected: exits `0`.
-Run: `C:\Users\scheurer\.cargo\bin\markplane.exe check`
+Run: `markplane check`
 Expected: no broken references, no invalid statuses, no dependency cycles.
 - [ ] **Step 3: Update acceptance criteria**
 Check off only verified criteria in `TASK-u2f8k`; leave GitHub remote publication unchecked until a valid repository and remotes exist.

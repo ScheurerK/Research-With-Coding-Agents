@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bash port of MarkplaneInstaller/Install-ClaudeCodeHooks.ps1.
+# Bash port of installer/windows/Install-ClaudeCodeHooks.ps1.
 # Wires (or removes) Markplane's SessionStart/PostToolUse/SubagentStart/Stop/
 # SessionEnd hooks in ~/.claude/settings.json (or a custom --settings-path).
 set -u

@@ -58,4 +58,41 @@ Describe "Research With Coding Agents public repository envelope" {
         Test-Path -LiteralPath (Join-Path $repoRoot "MarkplaneInstaller") -PathType Container | Should Be $false
         Test-Path -LiteralPath (Join-Path $repoRoot "Skills") -PathType Container | Should Be $false
     }
+
+    It "does not contain local workspace metadata or component build artifacts" {
+        foreach ($relativePath in @(
+            ".agents\mcp_config.json",
+            "components\markplane\.markplane",
+            "components\markplane\.claude",
+            "components\markplane\.github",
+            "components\markplane\Install-MarkplaneForCodex.ps1",
+            "components\markplane\rustup-init.exe",
+            "components\markplane\target",
+            "installer\windows\Output"
+        )) {
+            Test-Path -LiteralPath (Join-Path $repoRoot $relativePath) | Should Be $false
+        }
+    }
+
+    It "does not contain local absolute machine paths in public files" {
+        $publicRoots = @("README.md", "CONTRIBUTING.md", "SECURITY.md", "UPSTREAM.md", "THIRD_PARTY_NOTICES.md", "docs", "packages", "installer", "tests", "scripts")
+        $files = foreach ($relativePath in $publicRoots) {
+            $path = Join-Path $repoRoot $relativePath
+            if (Test-Path -LiteralPath $path -PathType Leaf) {
+                Get-Item -LiteralPath $path
+            } elseif (Test-Path -LiteralPath $path -PathType Container) {
+                Get-ChildItem -LiteralPath $path -Recurse -File |
+                    Where-Object {
+                        $_.FullName -notmatch '\\(Output|target|node_modules|dist)\\' -and
+                        $_.Name -match '(\.md|\.txt|\.ps1|\.psm1|\.iss|\.yml|\.yaml|\.json|\.toml|\.sh|\.rs|\.ts|\.tsx|\.js|\.css|\.html|\.gitignore|\.gitattributes)$'
+                    }
+            }
+        }
+
+        foreach ($file in $files) {
+            $content = [System.IO.File]::ReadAllText($file.FullName)
+            $content | Should Not Match "C:\\Users\\"
+            $content | Should Not Match "Downloads\\markplane-master"
+        }
+    }
 }

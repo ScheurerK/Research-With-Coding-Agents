@@ -1,6 +1,6 @@
-# Markplane Installer
+# Research With Coding Agents Windows Installer
 
-This folder contains Windows installer payloads for Markplane MCP integrations.
+This folder contains Windows installer payloads for Research With Coding Agents, including Markplane MCP integrations.
 
 ## Contents
 
@@ -59,7 +59,7 @@ Installer builds package `vscode-extension\markplane-vscode-0.1.2.vsix` from `..
 
 The Codex-oriented installer:
 
-- installs files to `%LOCALAPPDATA%\Programs\Markplane`
+- installs files to `%LOCALAPPDATA%\Programs\ResearchWithCodingAgents`
 - adds that directory to the user PATH
 - configures Markplane as a global Codex MCP server in `%USERPROFILE%\.codex\config.toml`
 - appends or replaces a managed Markplane block in `%USERPROFILE%\.codex\AGENTS.md`
@@ -123,7 +123,7 @@ The installer writes only its `markplane` entry in `hooks.json`, preserving unre
 Markplane MCP is not installed globally for Antigravity. The MCP process is project-scoped and fails during initialize when Antigravity starts it outside a directory tree containing `.markplane`. If a project needs MCP tools, run this once from or for that project:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "%LOCALAPPDATA%\Programs\Markplane\Install-AntigravityWorkspace.ps1" -ProjectRoot "<project-root>"
+powershell -ExecutionPolicy Bypass -File "%LOCALAPPDATA%\Programs\ResearchWithCodingAgents\Install-AntigravityWorkspace.ps1" -ProjectRoot "<project-root>"
 ```
 
 That command writes `.agents\mcp_config.json` with `markplane mcp --project <project-root>` and `cwd` set to the same root while preserving unrelated MCP servers.
@@ -179,6 +179,6 @@ Inspect Claude Code with `/hooks` and `/mcp` after installation. The hooks are g
 
 ## Privacy And Token Cost
 
-The Claude and Codex hooks do not use HTTP, prompt hooks, agent hooks, or telemetry. The Antigravity hooks also run only local PowerShell and `markplane.exe`; `PreInvocation` injects bounded ephemeral context through Antigravity's documented hook output contract. They run the installed `markplane.exe` by absolute path and store transient state under `%LOCALAPPDATA%\Markplane\claude-hooks\sessions`, `%LOCALAPPDATA%\Markplane\codex-hooks\sessions`, or `%LOCALAPPDATA%\Markplane\antigravity-hooks\sessions`. The injected Markplane summary becomes normal Claude, Codex, or Gemini conversation context and is therefore sent to the already used model service as part of that active session.
+The Claude and Codex hooks do not use HTTP, prompt hooks, agent hooks, or telemetry. The Antigravity hooks also run only local PowerShell and `markplane.exe`; `PreInvocation` injects bounded ephemeral context through Antigravity's documented hook output contract. They run the installed `markplane.exe` by absolute path and store transient state under `%LOCALAPPDATA%\ResearchWithCodingAgents\claude-hooks\sessions`, `%LOCALAPPDATA%\ResearchWithCodingAgents\codex-hooks\sessions`, or `%LOCALAPPDATA%\ResearchWithCodingAgents\antigravity-hooks\sessions`. The injected Markplane summary becomes normal Claude, Codex, or Gemini conversation context and is therefore sent to the already used model service as part of that active session.
 
 Expected context impact is bounded: up to 6000 characters, roughly 1500 tokens, on session start, resume, clear, or compaction; up to about 800 characters, roughly 200 tokens, per subagent start. Successful `PostToolUse`, `Stop`, and `SessionEnd` hooks write no model context.

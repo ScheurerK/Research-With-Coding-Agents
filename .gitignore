@@ -16,7 +16,10 @@ node_modules/
 
 # Local agent state
 .superpowers/sdd/
-
+.agents/
+components/*/.markplane/
+components/*/.claude/
+components/*/.github/
 # Secrets and local config
 .env
 .env.*

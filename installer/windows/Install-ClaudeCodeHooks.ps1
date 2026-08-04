@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$InstallDir = "$env:LOCALAPPDATA\Programs\Markplane",
+    [string]$InstallDir = "$env:LOCALAPPDATA\Programs\ResearchWithCodingAgents",
     [string]$SettingsPath = (Join-Path $HOME ".claude\settings.json"),
     [int]$MaxContextChars = 6000,
     [switch]$Uninstall
@@ -235,7 +235,7 @@ function Update-ClaudeCodeMarkplaneHooks {
 }
 
 function Remove-MarkplaneClaudeHookState {
-    $stateRoot = Join-Path $env:LOCALAPPDATA "Markplane\claude-hooks\sessions"
+    $stateRoot = Join-Path $env:LOCALAPPDATA "ResearchWithCodingAgents\claude-hooks\sessions"
     if (Test-Path -LiteralPath $stateRoot -PathType Container) {
         Remove-Item -LiteralPath $stateRoot -Recurse -Force
     }

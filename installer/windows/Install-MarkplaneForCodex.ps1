@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$InstallDir = "$env:LOCALAPPDATA\Programs\Markplane",
+    [string]$InstallDir = "$env:LOCALAPPDATA\Programs\ResearchWithCodingAgents",
     [string]$AgentsExtensionPath,
     [switch]$SkipCodexMcp,
     [switch]$SkipCodexHooks,

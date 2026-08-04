@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bash port of MarkplaneInstaller/Configure-ClaudeCode.ps1.
+# Bash port of installer/windows/Configure-ClaudeCode.ps1.
 # Registers the Markplane MCP server with Claude Code via the `claude` CLI,
 # and removes any legacy ~/.claude/settings.json mcpServers.markplane entry.
 set -u

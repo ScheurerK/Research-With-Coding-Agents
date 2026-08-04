@@ -51,5 +51,23 @@ foreach ($item in $items) {
     }
 }
 
+
+$forbiddenPaths = @(
+    ".agents\mcp_config.json",
+    "components\markplane\.markplane",
+    "components\markplane\.claude",
+    "components\markplane\.github",
+    "components\markplane\Install-MarkplaneForCodex.ps1",
+    "components\markplane\rustup-init.exe",
+    "components\markplane\target",
+    "installer\windows\Output"
+)
+
+foreach ($relativePath in $forbiddenPaths) {
+    $path = Join-Path $RepoRoot $relativePath
+    if (Test-Path -LiteralPath $path) {
+        throw "Forbidden local or generated file exists: $relativePath"
+    }
+}
 Write-Host "Research With Coding Agents distribution readiness checks passed."
 $global:LASTEXITCODE = 0

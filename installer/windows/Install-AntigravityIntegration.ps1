@@ -1,4 +1,4 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 param(
     [string]$InstallDir = "$env:LOCALAPPDATA\Programs\ResearchWithCodingAgents",
     [string]$SkillSourceRoot,
@@ -223,7 +223,7 @@ function Remove-AntigravityMcp {
 }
 
 function Remove-AntigravityHookState {
-    $stateRoot = Join-Path $env:LOCALAPPDATA "Markplane\antigravity-hooks\sessions"
+    $stateRoot = Join-Path $env:LOCALAPPDATA "ResearchWithCodingAgents\antigravity-hooks\sessions"
     if (Test-Path -LiteralPath $stateRoot -PathType Container) {
         try {
             Remove-Item -LiteralPath $stateRoot -Recurse -Force -ErrorAction Stop
@@ -335,5 +335,3 @@ Write-Step "Removed stale global Antigravity Markplane MCP from $mcpPath when pr
 Write-Step "Configured Antigravity hooks in $hooksPath"
 Write-Step "Installed Gemini global instructions in $geminiPath"
 $global:LASTEXITCODE = 0
-
-

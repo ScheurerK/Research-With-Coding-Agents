@@ -1,61 +1,61 @@
 # Research Checkpoint Commits
 
-Ein portabler Agent-Skill für wissenschaftliche Git-Workflows mit Markplane.
+A portable agent skill for scientific Git workflows with Markplane.
 
-## Was der Skill erzwingt
+## What This Skill Enforces
 
-- Ein wissenschaftlich sinnvoller Kontrollpunkt pro Commit.
-- Eine Markplane-TASK als Eigentümer jedes Diffs.
-- Methodische Entscheidungen und Anomalien als Markplane-NOTES.
-- Explizite Validierung vor dem Abschluss.
-- Commit-Nachrichten, die das **Warum** und den Forschungsbezug dokumentieren.
-- Gemeinsame Versionierung von Code, überprüfbaren Ergebnissen und Projektstatus.
+- One scientifically meaningful checkpoint per commit.
+- One Markplane TASK as the owner of every diff.
+- Methodological decisions and anomalies captured as Markplane NOTES.
+- Explicit validation before completion.
+- Commit messages that document the research reason, not only the file changes.
+- Joint versioning of code, verifiable results, and project status.
 
-## Markplane-Modell
+## Markplane Model
 
-| Markplane-Objekt | Verwendung im Forschungsprojekt |
-|---|---|
-| EPIC | Paper, Kapitel, Forschungsfrage oder Replikation |
-| PLAN | Mehrstufiger Analyse- oder Reproduktionsplan |
-| TASK | Genau ein commitfähiger Forschungsschritt |
-| NOTE | Entscheidung, Datenherkunft, Anomalie, Interpretation oder Befund |
+| Markplane object | Research project use |
+| --- | --- |
+| EPIC | Paper, chapter, research question, or replication |
+| PLAN | Multi-step analysis or reproduction plan |
+| TASK | Exactly one committable research step |
+| NOTE | Decision, data provenance, anomaly, interpretation, or finding |
 
-## Paketinhalt
+## Package Contents
 
-- `SKILL.md` — vollständiger Workflow für den Agenten.
-- `references/validation-matrix.md` — fachliche Prüfungen nach Arbeitsschritt.
-- `references/markplane-integration.md` — Zuordnung, Status- und Verknüpfungsregeln.
-- `templates/research-task-body.md` — Body-Vorlage für eine Checkpoint-TASK.
-- `templates/research-plan-body.md` — Vorlage für einen mehrstufigen Forschungsplan.
-- `templates/research-decision-note.md` — Vorlage für dauerhafte methodische Entscheidungen.
-- `AGENTS.md.snippet.md` — kurze Projektanweisung zur automatischen Nutzung.
-- `.mcp.json.example` — projektweite Markplane-MCP-Konfiguration.
-- `scripts/checkpoint-audit.sh` — schreibgeschützte Prüfung des gestagten Checkpoints.
+- `SKILL.md` - complete workflow for the agent.
+- `references/validation-matrix.md` - domain checks by work type.
+- `references/markplane-integration.md` - mapping, status, and linking rules.
+- `templates/research-task-body.md` - body template for a checkpoint TASK.
+- `templates/research-plan-body.md` - template for a multi-step research plan.
+- `templates/research-decision-note.md` - template for durable methodological decisions.
+- `AGENTS.md.snippet.md` - short project instruction for automatic use.
+- `.mcp.json.example` - project-level Markplane MCP configuration.
+- `scripts/checkpoint-audit.sh` - read-only audit of the staged checkpoint.
 
-## Verwendung
+## Usage
 
-1. Stelle sicher, dass das Projekt ein Git-Repository und eine `.markplane/`-Struktur besitzt.
-2. Verbinde Markplane über MCP oder stelle die `markplane`-CLI bereit.
-3. Installiere beziehungsweise lade den Skill in einem Agenten, der den offenen `SKILL.md`-Standard unterstützt.
-4. Ergänze bei Bedarf den Inhalt aus `AGENTS.md.snippet.md` in den Projektanweisungen.
-5. Starte beispielsweise mit:
-
-```text
-Nutze research-checkpoint-commits. Zerlege die Baseline-Analyse in
-Markplane-TASKs und bearbeite anschließend den ersten Kontrollpunkt.
-```
-
-Oder mit einer bestehenden Aufgabe:
+1. Ensure the project is a Git repository and contains a `.markplane/` structure.
+2. Connect Markplane through MCP or make the `markplane` CLI available.
+3. Install or load the skill in an agent that supports the open `SKILL.md` convention.
+4. Add the contents of `AGENTS.md.snippet.md` to project instructions when useful.
+5. Start with a request such as:
 
 ```text
-Nutze research-checkpoint-commits für TASK-k3m8p. Committe nur,
-wenn die Daten- und Stichprobenprüfungen bestanden sind.
+Use research-checkpoint-commits. Break the baseline analysis into
+Markplane TASKs, then implement the first checkpoint.
 ```
 
-## Empfohlene Markplane-Konfiguration
+Or with an existing task:
 
-Der Standard-Task-Typ `research` und die Standard-Notiztypen `research`,
-`analysis` und `decision` passen bereits gut. Sinnvolle zusätzliche Tags sind:
+```text
+Use research-checkpoint-commits for TASK-k3m8p. Commit only after
+the data and sample checks have passed.
+```
+
+## Recommended Markplane Configuration
+
+The default task type `research` and the default note types `research`,
+`analysis`, and `decision` already fit well. Useful additional tags include:
 
 ```text
 exploratory
@@ -71,8 +71,8 @@ paper
 reproducibility
 ```
 
-## Sicherheitsprinzip
+## Safety Principle
 
-Der Skill commitet keine Rohdaten oder sensiblen Daten automatisch. Er bevorzugt
-Code, Provenienz, Prüfsummen, Schemata, kleine erlaubte Fixtures und
-Validierungszusammenfassungen.
+The skill does not automatically commit raw data or sensitive data. It prefers
+code, provenance, checksums, schemas, small approved fixtures, and validation
+summaries.
