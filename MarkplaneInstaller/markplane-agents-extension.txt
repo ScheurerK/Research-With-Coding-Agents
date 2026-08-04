@@ -1,0 +1,42 @@
+# Codex Project Instructions
+
+## Markplane Logging
+
+Use Markplane as the project tracking and session logging system whenever the current workspace contains a `.markplane/` directory or a Markplane MCP server is active.
+
+### Bootstrap
+
+At the start of each session:
+
+- Check whether the current project has a `.markplane/` directory.
+- If `.markplane/` is missing and the workspace looks like a real project or git repository, ask the user whether Markplane should be initialized.
+- If the user agrees, initialize it with:
+
+  `markplane init --name "<project-folder-name>" --empty`
+
+- After initialization, run:
+
+  `markplane sync`
+
+### Session Start
+
+When Markplane is available:
+
+- Check current project state with `markplane_summary` or `markplane_query`.
+- Identify active tasks, blocked work, relevant plans, and recent notes before making changes.
+
+### During Work
+
+- Create or update Markplane tasks when new actionable work appears.
+- Create notes for meaningful decisions, research findings, assumptions, or blockers.
+- Link tasks, plans, notes, and epics when the relationship matters.
+- Keep task status current: `planned`, `in-progress`, `done`, or another configured project status.
+
+### Before Finishing
+
+Before the final response:
+
+- Update the relevant Markplane task or note with what changed.
+- Mark completed tasks as done only when the requested work is actually verified.
+- Run `markplane_sync` after structural Markplane changes.
+- Mention in the final answer which Markplane item was created or updated.

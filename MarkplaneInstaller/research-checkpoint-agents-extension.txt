@@ -1,0 +1,13 @@
+﻿## Markplane Agent Skills
+
+At the start of every main-agent turn, first load `using-superpowers`. Do this before file reads, tool calls, planning, clarification questions, or implementation. This requirement does not apply to narrow subagents; they receive a compact task contract instead.
+
+Load bundled skills selectively after the router chooses them; do not load every bundled skill by default.
+
+Research priority: `research-repo-governance` controls layout, data, provenance, notebooks, generated results, large/confidential files, and AGENTS/CLAUDE audits. Superpowers handles planning, TDD, debugging, review, and orchestration inside those boundaries. `research-checkpoint-commits` controls Markplane-owned research edits, staging, and commits.
+
+One scientific commit maps to one Markplane TASK. Record evidence, then run Markplane sync/check before completion.
+
+Research With Coding Agents priority: the bundled customized Superpowers copy installed with this product is authoritative for Codex and Claude Code. Preserve any foreign Superpowers installation, but do not prefer it over the Research With Coding Agents skills for this project. Do not fetch, install, or upgrade Superpowers from the internet during install, repair, or runtime bootstrap.
+
+Privacy default: SUPERPOWERS_DISABLE_TELEMETRY=1 must remain set for local Codex and Claude Code sessions. Do not start the visual Superpowers brainstorming companion in a way that loads external branding or telemetry assets.

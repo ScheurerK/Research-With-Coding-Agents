@@ -1,0 +1,47 @@
+{
+  "name": "research-checkpoint-commits",
+  "version": "0.1.0",
+  "format": "Agent Skills / SKILL.md",
+  "files": {
+    ".mcp.json.example": {
+      "sha256": "87fc35a0c78a06c85e54c1b6b9cb0118074c1fa7227951c6ad6a191c9cef9721",
+      "bytes": 103
+    },
+    "AGENTS.md.snippet.md": {
+      "sha256": "c47c6dae0523f61a9e8d4b22cdaf67221da410c3f85b141ffe8369fa40f48db7",
+      "bytes": 728
+    },
+    "README.md": {
+      "sha256": "d65aba693e6534acb354169e7cb148ae6f91ec3301de43a106db203e80af70f4",
+      "bytes": 2859
+    },
+    "SKILL.md": {
+      "sha256": "b1220f08daff14663860841a513d5dd000b02430c4b25edc2772415c16f14c8d",
+      "bytes": 14195
+    },
+    "references/markplane-integration.md": {
+      "sha256": "b1d9f98d18163e7a23ca6439ae532e8e2cfb18d47db02248829dea73641ae291",
+      "bytes": 1648
+    },
+    "references/validation-matrix.md": {
+      "sha256": "6d217718c7f40f01408afa3393b695871bf91e49a3cd9cf21207a28e2fdd1a64",
+      "bytes": 2296
+    },
+    "scripts/checkpoint-audit.sh": {
+      "sha256": "b17646c894260f4c137de66483df526389368fea322d8b0ea88e37424d08a563",
+      "bytes": 1231
+    },
+    "templates/research-decision-note.md": {
+      "sha256": "18259e458134ec4919f60feed396699d40956d31d4e112042d9701460aa62058",
+      "bytes": 708
+    },
+    "templates/research-plan-body.md": {
+      "sha256": "2255f90251123fc5ca0807568f14599835d7596f0ac4e05fc2408a9cf901a16b",
+      "bytes": 1881
+    },
+    "templates/research-task-body.md": {
+      "sha256": "0d62a488c8aa1225eeee5ea941d424d98f0ac2181a6d93f4f804105258a237d7",
+      "bytes": 1159
+    }
+  }
+}

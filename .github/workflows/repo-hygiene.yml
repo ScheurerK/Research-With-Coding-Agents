@@ -1,0 +1,27 @@
+name: Repository Hygiene
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  hygiene:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Validate public repository envelope
+        shell: powershell
+        run: |
+          .\scripts\Test-RwcaDistributionReadiness.ps1
+          if (-not (Test-Path .\THIRD_PARTY_NOTICES.md)) { throw "THIRD_PARTY_NOTICES.md missing" }
+
+      - name: Run public repository tests
+        shell: powershell
+        run: |
+          Invoke-Pester .\tests

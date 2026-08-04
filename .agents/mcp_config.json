@@ -1,0 +1,13 @@
+{
+    "mcpServers":  {
+                       "markplane":  {
+                                         "command":  "C:\\Users\\scheurer\\Downloads\\markplane-master\\MarkplaneInstaller\\markplane.exe",
+                                         "args":  [
+                                                      "mcp",
+                                                      "--project",
+                                                      "C:\\Users\\scheurer\\Downloads\\markplane-master"
+                                                  ],
+                                         "cwd":  "C:\\Users\\scheurer\\Downloads\\markplane-master"
+                                     }
+                   }
+}

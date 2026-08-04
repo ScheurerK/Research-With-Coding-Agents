@@ -1,0 +1,24 @@
+# Local and generated files
+.DS_Store
+Thumbs.db
+debug.log
+dist/
+Output/
+*.vsix
+*.exe
+
+# Rust
+target/
+
+# Node
+node_modules/
+.next/
+
+# Local agent state
+.superpowers/sdd/
+
+# Secrets and local config
+.env
+.env.*
+*.key
+*.pem

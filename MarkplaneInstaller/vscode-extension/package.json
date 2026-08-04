@@ -1,0 +1,119 @@
+{
+  "name": "markplane-vscode",
+  "displayName": "Markplane",
+  "description": "Markplane project tracking inside VS Code.",
+  "version": "0.1.2",
+  "publisher": "local",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:markplane.workspace",
+    "onCommand:markplane.initializeProject",
+    "onCommand:markplane.openFullView",
+    "onCommand:markplane.restartServer",
+    "onCommand:markplane.sync",
+    "onCommand:markplane.check"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Markplane",
+      "properties": {
+        "markplane.executable": {
+          "type": "string",
+          "default": "markplane",
+          "description": "Path to the Markplane executable."
+        },
+        "markplane.port": {
+          "type": "number",
+          "default": 4200,
+          "description": "Base port for local Markplane web UI servers. Each VS Code workspace uses this port or the next available project-specific port."
+        },
+        "markplane.showOnStartup": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Markplane workspace graph view when a VS Code window starts."
+        },
+        "markplane.autoStart": {
+          "type": "boolean",
+          "default": true,
+          "description": "Start the Markplane web UI automatically when a Markplane project is open."
+        },
+        "markplane.autoInitialize": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically initialize Markplane in workspaces that do not yet contain .markplane."
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "markplane.initializeProject",
+        "title": "Markplane: Initialize Project"
+      },
+      {
+        "command": "markplane.openFullView",
+        "title": "Markplane: Open Full View"
+      },
+      {
+        "command": "markplane.restartServer",
+        "title": "Markplane: Restart Server"
+      },
+      {
+        "command": "markplane.sync",
+        "title": "Markplane: Sync"
+      },
+      {
+        "command": "markplane.check",
+        "title": "Markplane: Check"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "markplane",
+          "title": "Markplane",
+          "icon": "resources/markplane.svg"
+        }
+      ]
+    },
+    "views": {
+      "markplane": [
+        {
+          "type": "webview",
+          "id": "markplane.workspace",
+          "name": "Workspace"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "markplane.openFullView",
+          "when": "view == markplane.workspace",
+          "group": "navigation"
+        },
+        {
+          "command": "markplane.sync",
+          "when": "view == markplane.workspace",
+          "group": "navigation"
+        },
+        {
+          "command": "markplane.check",
+          "when": "view == markplane.workspace",
+          "group": "navigation"
+        },
+        {
+          "command": "markplane.restartServer",
+          "when": "view == markplane.workspace",
+          "group": "navigation"
+        }
+      ]
+    }
+  }
+}

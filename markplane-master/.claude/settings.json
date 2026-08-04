@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.local*)",
+      "Read(**/.env.test*)",
+      "Read(**/secrets/**)",
+      "Read(**/credentials/**)"
+    ],
+    "allow": [
+      "Read(**/.env.example)",
+      "Bash(cargo build *)",
+      "Bash(cargo test *)",
+      "Bash(cargo clippy *)",
+      "Bash(cargo fmt *)",
+      "Bash(cargo check *)",
+      "Bash(cargo install *)",
+      "Bash(npm install)",
+      "Bash(npm run build)",
+      "Bash(markplane ls *)",
+      "Bash(markplane show *)",
+      "Bash(markplane sync *)",
+      "Bash(markplane check *)",
+      "Bash(markplane dashboard *)",
+      "Bash(markplane metrics *)",
+      "Bash(markplane graph *)",
+      "Bash(markplane context *)"
+    ]
+  },
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}

@@ -1,0 +1,23 @@
+# Experiment manifest template.
+# Copy into experiments/<run-id>/manifest.yaml and fill in every field.
+# See references/experiment-provenance.md for how to capture each value.
+
+run_id: ""              # matches the experiments/<run-id>/ folder name
+
+# --- required for reproducibility ---
+commit: ""               # `git rev-parse HEAD` at launch time
+config: ""                 # path to the config file actually used (copy it into this folder too)
+seed:                        # one entry per RNG that matters
+  python: null
+  numpy: null
+  torch: null
+dataset_version: ""             # content hash or DVC/LFS object id of the input data
+environment: ""                   # lockfile hash or container image digest
+command: ""                         # literal command used to launch the run
+
+# --- recommended ---
+author: ""
+timestamp: ""                         # ISO 8601, e.g. 2026-07-20T14:03:00Z
+hardware: ""                            # e.g. "1x A100 40GB", "local CPU"
+results_path: ""                          # where this run's output lives (results/ or experiments/<run-id>/output/)
+notes: ""                                   # anything relevant that doesn't fit above
