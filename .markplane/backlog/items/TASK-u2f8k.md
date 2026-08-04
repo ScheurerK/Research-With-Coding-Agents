@@ -78,4 +78,8 @@ Remaining before closing this task:
 - Repair or initialize the invalid root `.git`, then create/pin the real GitHub fork submodules.
 - Run a true clean-profile install/repair/update/uninstall smoke test against the generated setup executable.
 - Push to GitHub and let the workflows run on the real repository.
+## Git Publication Progress 2026-08-04
 
+Initialized the workspace as a valid local Git repository on branch `main`, staged non-ignored project files, created initial commit `5a7093a` (`Initial Research With Coding Agents package`), and added local tag `v0.1.0`.
+
+`gh` is not installed on this machine, so GitHub repository creation and authenticated push cannot be completed automatically through the GitHub CLI in this session. Next step is to create an empty GitHub repository named `research-with-coding-agents`, add it as `origin`, then push `main` and `v0.1.0`.
