@@ -1,5 +1,6 @@
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$adapter = Join-Path $root "hooks\Invoke-MarkplaneAntigravityHook.ps1"
+$repoRoot = Split-Path -Parent (Split-Path -Parent $root)
+$adapter = Join-Path $repoRoot "packages\agent-adapters\hooks\Invoke-MarkplaneAntigravityHook.ps1"
 $markplane = Join-Path $root "markplane.exe"
 
 function Invoke-AntigravityHookProcess {

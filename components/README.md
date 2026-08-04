@@ -1,8 +1,8 @@
 # Components
 
-This directory is reserved for pinned component forks:
+This directory contains the component source trees that users are most likely to inspect or fork:
 
-- `markplane`: maintained fork of `https://github.com/zerowand01/markplane`
-- `superpowers`: maintained fork of `https://github.com/obra/superpowers`
+- `markplane`: maintained source tree linked to `https://github.com/zerowand01/markplane`
+- `superpowers`: maintained customized Superpowers distribution linked to `https://github.com/obra/superpowers`
 
-Release builds fail when component commits are missing, dirty, or not represented in `THIRD_PARTY_NOTICES.md`.
+The bundled Superpowers tree under `components/superpowers/skills` is the installer authority. Do not replace it with a network download during install, repair, or release builds.

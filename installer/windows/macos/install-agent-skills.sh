@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bash port of MarkplaneInstaller/Install-MarkplaneAgentSkills.ps1, scoped to
+# Bash port of installer/windows/Install-MarkplaneAgentSkills.ps1, scoped to
 # Claude Code only (no Codex/~/.codex paths — see macos/README.md).
 # Installs Markplane's bundled Superpowers-style skills into ~/.claude/skills
 # and manages a marked "bundled agent skill" block in ~/.claude/CLAUDE.md.
@@ -30,7 +30,7 @@ resolve_skill_source_root() {
     printf '%s\n' "$(cd "$SKILL_SOURCE_ROOT" && pwd -P)"
     return 0
   fi
-  local candidate="$SCRIPT_DIR/../skills"
+  local candidate="$SCRIPT_DIR/../../../components/superpowers/skills"
   if [ -d "$candidate" ]; then
     printf '%s\n' "$(cd "$candidate" && pwd -P)"
     return 0

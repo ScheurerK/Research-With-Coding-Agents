@@ -30,7 +30,7 @@ Describe "Research With Coding Agents public repository envelope" {
 
         $readme | Should Match "Research With Coding Agents"
         $readme | Should Match "ResearchWithCodingAgentsSetup-v0\.1\.0\.exe"
-        $readme | Should Match "git clone --recurse-submodules"
+        $readme | Should Match "git clone https://github.com/<owner>/research-with-coding-agents.git"
         $readme | Should Match "Windows"
         $readme | Should Match "experimental"
         $readme | Should Match "\.research-with-coding-agents\\extensions"
@@ -41,5 +41,21 @@ Describe "Research With Coding Agents public repository envelope" {
 
         $readme | Should Not Match "^# Markplane"
         $readme | Should Match "Markplane is a core component"
+    }
+
+    It "uses the public source layout rather than legacy staging directories" {
+        foreach ($relativePath in @(
+            "components\markplane\Cargo.toml",
+            "components\superpowers\skills\using-superpowers\SKILL.md",
+            "packages\vscode-extension\source\package.json",
+            "packages\agent-adapters\hooks\Invoke-MarkplaneAntigravityHook.ps1",
+            "installer\windows\MarkplaneInstaller.iss"
+        )) {
+            Test-Path -LiteralPath (Join-Path $repoRoot $relativePath) -PathType Leaf | Should Be $true
+        }
+
+        Test-Path -LiteralPath (Join-Path $repoRoot "markplane-master") -PathType Container | Should Be $false
+        Test-Path -LiteralPath (Join-Path $repoRoot "MarkplaneInstaller") -PathType Container | Should Be $false
+        Test-Path -LiteralPath (Join-Path $repoRoot "Skills") -PathType Container | Should Be $false
     }
 }

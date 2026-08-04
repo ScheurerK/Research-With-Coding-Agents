@@ -1,4 +1,6 @@
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$repoRoot = Split-Path -Parent (Split-Path -Parent $root)
+$skills = Join-Path $repoRoot "components\superpowers\skills"
 
 function Get-AgentContextContract {
     param([Parameter(Mandatory = $true)][string]$Path)
@@ -9,59 +11,17 @@ function Get-AgentContextContract {
         return $null
     }
     return $match.Groups["body"].Value.Trim()
-
-    It "makes implementer subagent commits opt-in" {
-        $content = Get-Content -Raw -LiteralPath $implementerPrompt
-        $content | Should Match "subagent_commit_mode: per-task"
-        $content | Should Match "Do not stage or commit unless"
-        $content | Should Match "Commit action"
-        $content | Should Not Match "Commit your work"
-        $content | Should Not Match "Commits created"
-    }
-
-    It "documents controller-owned commits as the SDD default" {
-        $content = Get-Content -Raw -LiteralPath (Join-Path $root "skills\subagent-driven-development\SKILL.md")
-        $content | Should Match "Controller owns commits by default"
-        $content | Should Match "Subagents do not stage or commit by default"
-        $content | Should Match "subagent_commit_mode: per-task"
-        $content | Should Match "research-checkpoint-commits"
-    }
-
-    It "keeps research checkpoint commits as the scientific commit owner" {
-        $content = Get-Content -Raw -LiteralPath (Join-Path $root "skills\research-checkpoint-commits\SKILL.md")
-        $content | Should Match "One primary Markplane TASK owns each scientific Git commit"
-    }
 }
+
 function Count-Words {
     param([AllowEmptyString()][string]$Text)
     return @([regex]::Matches($Text, '\S+')).Count
-
-    It "makes implementer subagent commits opt-in" {
-        $content = Get-Content -Raw -LiteralPath $implementerPrompt
-        $content | Should Match "subagent_commit_mode: per-task"
-        $content | Should Match "Do not stage or commit unless"
-        $content | Should Match "Commit action"
-        $content | Should Not Match "Commit your work"
-        $content | Should Not Match "Commits created"
-    }
-
-    It "documents controller-owned commits as the SDD default" {
-        $content = Get-Content -Raw -LiteralPath (Join-Path $root "skills\subagent-driven-development\SKILL.md")
-        $content | Should Match "Controller owns commits by default"
-        $content | Should Match "Subagents do not stage or commit by default"
-        $content | Should Match "subagent_commit_mode: per-task"
-        $content | Should Match "research-checkpoint-commits"
-    }
-
-    It "keeps research checkpoint commits as the scientific commit owner" {
-        $content = Get-Content -Raw -LiteralPath (Join-Path $root "skills\research-checkpoint-commits\SKILL.md")
-        $content | Should Match "One primary Markplane TASK owns each scientific Git commit"
-    }
 }
+
 Describe "Superpowers subagent Markplane contract" {
-    $implementerPrompt = Join-Path $root "skills\subagent-driven-development\implementer-prompt.md"
-    $reviewerPrompt = Join-Path $root "skills\subagent-driven-development\task-reviewer-prompt.md"
-    $dispatchSkill = Join-Path $root "skills\dispatching-parallel-agents\SKILL.md"
+    $implementerPrompt = Join-Path $skills "subagent-driven-development\implementer-prompt.md"
+    $reviewerPrompt = Join-Path $skills "subagent-driven-development\task-reviewer-prompt.md"
+    $dispatchSkill = Join-Path $skills "dispatching-parallel-agents\SKILL.md"
 
     It "adds a compact contract to implementer subagents" {
         $contract = Get-AgentContextContract -Path $implementerPrompt
@@ -109,7 +69,7 @@ Describe "Superpowers subagent Markplane contract" {
     }
 
     It "defines agent-agnostic model tiers for planning and implementation" {
-        $content = Get-Content -Raw -LiteralPath (Join-Path $root "skills\subagent-driven-development\SKILL.md")
+        $content = Get-Content -Raw -LiteralPath (Join-Path $skills "subagent-driven-development\SKILL.md")
         $content | Should Match "high-reasoning"
         $content | Should Match "standard-implementation"
         $content | Should Match "cheap-mechanical"
@@ -133,8 +93,8 @@ Describe "Superpowers subagent Markplane contract" {
     }
 
     It "caps brainstorming and plan writing reasoning without model names" {
-        $brainstorming = Get-Content -Raw -LiteralPath (Join-Path $root "skills\brainstorming\SKILL.md")
-        $writingPlans = Get-Content -Raw -LiteralPath (Join-Path $root "skills\writing-plans\SKILL.md")
+        $brainstorming = Get-Content -Raw -LiteralPath (Join-Path $skills "brainstorming\SKILL.md")
+        $writingPlans = Get-Content -Raw -LiteralPath (Join-Path $skills "writing-plans\SKILL.md")
         foreach ($content in @($brainstorming, $writingPlans)) {
             $content | Should Match "reasoning effort is capped at high"
             $content | Should Match "standard model"
@@ -153,7 +113,7 @@ Describe "Superpowers subagent Markplane contract" {
     }
 
     It "documents controller-owned commits as the SDD default" {
-        $content = Get-Content -Raw -LiteralPath (Join-Path $root "skills\subagent-driven-development\SKILL.md")
+        $content = Get-Content -Raw -LiteralPath (Join-Path $skills "subagent-driven-development\SKILL.md")
         $content | Should Match "Controller owns commits by default"
         $content | Should Match "Subagents do not stage or commit by default"
         $content | Should Match "subagent_commit_mode: per-task"
@@ -161,7 +121,7 @@ Describe "Superpowers subagent Markplane contract" {
     }
 
     It "keeps research checkpoint commits as the scientific commit owner" {
-        $content = Get-Content -Raw -LiteralPath (Join-Path $root "skills\research-checkpoint-commits\SKILL.md")
+        $content = Get-Content -Raw -LiteralPath (Join-Path $skills "research-checkpoint-commits\SKILL.md")
         $content | Should Match "One primary Markplane TASK owns each scientific Git commit"
     }
 }

@@ -1,35 +1,20 @@
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$repoRoot = Split-Path -Parent (Split-Path -Parent $root)
 $packager = Join-Path $root "Package-VSCodeExtension.ps1"
 
 Describe "VSIX packaging" {
-    It "uses public default paths in a subprocess without touching the repository VSIX" {
-        $fixtureRoot = Join-Path $TestDrive "default-packager"
-        $fixtureExtension = Join-Path $fixtureRoot "vscode-extension"
-        $fixturePackager = Join-Path $fixtureRoot "Package-VSCodeExtension.ps1"
-        $fixtureOutput = Join-Path $fixtureExtension "markplane-vscode-0.1.2.vsix"
+    It "uses the public default extension source with an injected VSCE command" {
+        $fixtureOutput = Join-Path $TestDrive "markplane-vscode-0.1.2.vsix"
         $fakeVsce = Join-Path $TestDrive "fake-default-vsce.ps1"
-
-        New-Item -ItemType Directory -Force -Path $fixtureExtension | Out-Null
-        Copy-Item -LiteralPath $packager -Destination $fixturePackager
-        Copy-Item -LiteralPath (Join-Path $root "vscode-extension\package.json") -Destination (Join-Path $fixtureExtension "package.json")
-        Set-Content -LiteralPath $fakeVsce -Value @'
-param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Remaining)
+        Set-Content -LiteralPath $fakeVsce -Value 'param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Remaining)
 $index = [Array]::IndexOf($Remaining, "--out")
 if ($index -lt 0) { exit 2 }
-[System.IO.File]::WriteAllText($Remaining[$index + 1], "fake-default-vsix")
-'@
+[System.IO.File]::WriteAllText($Remaining[$index + 1], "fake-default-vsix")'
 
-        try {
-            & powershell.exe -NoProfile -File $fixturePackager -VsceCommand $fakeVsce
-            $LASTEXITCODE | Should Be 0
-            (Test-Path -LiteralPath $fixtureOutput -PathType Leaf) | Should Be $true
-        } finally {
-            if (Test-Path -LiteralPath $fixtureOutput -PathType Leaf) {
-                Remove-Item -LiteralPath $fixtureOutput -Force
-            }
-        }
+        & $packager -OutputPath $fixtureOutput -VsceCommand $fakeVsce
 
-        (Test-Path -LiteralPath $fixtureOutput -PathType Leaf) | Should Be $false
+        $LASTEXITCODE | Should Be 0
+        (Test-Path -LiteralPath $fixtureOutput -PathType Leaf) | Should Be $true
     }
 
     It "packages the deterministic VSIX path through an injected vsce command" {
@@ -37,12 +22,10 @@ if ($index -lt 0) { exit 2 }
         New-Item -ItemType Directory -Force -Path $source | Out-Null
         Set-Content -LiteralPath (Join-Path $source "package.json") -Value '{"name":"markplane-vscode","publisher":"local","version":"0.1.2","engines":{"vscode":"^1.85.0"}}'
         $fakeVsce = Join-Path $TestDrive "fake-vsce.ps1"
-        Set-Content -LiteralPath $fakeVsce -Value @'
-param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Remaining)
+        Set-Content -LiteralPath $fakeVsce -Value 'param([Parameter(ValueFromRemainingArguments = $true)][string[]]$Remaining)
 $index = [Array]::IndexOf($Remaining, "--out")
 if ($index -lt 0) { exit 2 }
-[System.IO.File]::WriteAllText($Remaining[$index + 1], "fake-vsix")
-'@
+[System.IO.File]::WriteAllText($Remaining[$index + 1], "fake-vsix")'
         $output = Join-Path $TestDrive "markplane-vscode-0.1.2.vsix"
 
         & $packager -ExtensionSource $source -OutputPath $output -VsceCommand $fakeVsce
@@ -50,7 +33,6 @@ if ($index -lt 0) { exit 2 }
         $LASTEXITCODE | Should Be 0
         (Test-Path -LiteralPath $output -PathType Leaf) | Should Be $true
     }
-
 
     It "fails when the packaging command exits nonzero" {
         $source = Join-Path $TestDrive "extension"

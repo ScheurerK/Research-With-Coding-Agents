@@ -1,8 +1,9 @@
-﻿$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$repoRoot = Split-Path -Parent (Split-Path -Parent $root)
 $installer = Join-Path $root "Install-AntigravityIntegration.ps1"
 $workspaceInstaller = Join-Path $root "Install-AntigravityWorkspace.ps1"
-$hookScript = Join-Path $root "hooks\Invoke-MarkplaneAntigravityHook.ps1"
-$skills = Join-Path $root "skills"
+$hookScript = Join-Path $repoRoot "packages\agent-adapters\hooks\Invoke-MarkplaneAntigravityHook.ps1"
+$skills = Join-Path $repoRoot "components\superpowers\skills"
 $hint = Join-Path $root "research-checkpoint-agents-extension.txt"
 $healthCheck = Join-Path $root "Test-MarkplaneAgentSkills.ps1"
 
@@ -28,7 +29,7 @@ Describe "Antigravity Gemini integration" {
     }
 
     It "teaches using-superpowers when to read Antigravity tool mappings" {
-        $content = Get-Content -Raw -LiteralPath (Join-Path $root "skills\using-superpowers\SKILL.md")
+        $content = Get-Content -Raw -LiteralPath (Join-Path $skills "using-superpowers\SKILL.md")
         $content | Should Match "references/antigravity-tools.md"
         $content | Should Match "Antigravity"
     }

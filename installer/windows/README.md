@@ -14,12 +14,12 @@ This folder contains Windows installer payloads for Markplane MCP integrations.
 - `Install-VSCodeExtension.ps1` - installs, verifies, and uninstalls the bundled Markplane VSIX through the official VS Code and Antigravity IDE CLIs.
 - `Configure-ClaudeCode.ps1` - helper to register Markplane MCP with Claude Code user scope via the Claude CLI.
 - `Install-ClaudeCodeHooks.ps1` - installs or removes Claude Code lifecycle hooks for project-local Markplane context.
-- `hooks/` - Claude Code hook runtime and event entrypoint.
+- `../../packages/agent-adapters/hooks/` - Claude Code, Codex, and Antigravity hook runtime and event entrypoints packaged by this installer.
 - `markplane-agents-extension.txt` - managed Codex AGENTS.md snippet for Markplane logging.
 - `research-checkpoint-agents-extension.txt` - managed Codex/Claude hint for Superpowers plus research checkpoint commits.
-- `skills/` - bundled portable skills: Superpowers 6.1.1 plus `research-repo-governance` and `research-checkpoint-commits`.
-- `vscode-extension/` - local VS Code webview extension payload and bundled `markplane-vscode-0.1.2.vsix` build output.
-- `agent-config-templates/` - MCP configuration snippets for Claude Code, Cursor, VS Code, Windsurf, Zed, and Continue.
+- `../../components/superpowers/skills/` - authoritative customized Superpowers skill tree packaged to `{app}\skills`.
+- `../../packages/vscode-extension/source/` - Markplane UI extension source. `vscode-extension/` is generated build output containing the packaged VSIX.
+- `../../packages/agent-adapters/templates/` - MCP configuration snippets for Claude Code, Cursor, VS Code, Windsurf, Zed, and Continue.
 - `MarkplaneInstaller.iss` - Inno Setup installer definition.
 - `Build-Installer.ps1` - helper that compiles the Codex-oriented `.iss` file.
 - `MarkplaneAgentInstaller.iss` - agent-neutral installer definition.
@@ -36,7 +36,7 @@ powershell -ExecutionPolicy Bypass -File .\Build-Installer.ps1
 The output will be:
 
 ```text
-Output\MarkplaneSetup-0.1.2.exe
+Output\ResearchWithCodingAgentsSetup-v0.1.0.exe
 ```
 
 For the agent-neutral installer:
@@ -48,12 +48,12 @@ powershell -ExecutionPolicy Bypass -File .\Build-AgentInstaller.ps1
 The output will be:
 
 ```text
-Output\MarkplaneAgentSetup-0.1.2.exe
+Output\ResearchWithCodingAgentsAgentSetup-v0.1.0.exe
 ```
 
 ## VSIX Build
 
-Installer builds package `vscode-extension\markplane-vscode-0.1.2.vsix` from the local extension payload. This build-time prerequisite may use `vsce` or `npx` only in the build environment. End users receive the bundled VSIX and do not need Node.js, npm, npx, or a network download.
+Installer builds package `vscode-extension\markplane-vscode-0.1.2.vsix` from `..\..\packages\vscode-extension\source`. This build-time prerequisite may use `vsce` or `npx` only in the build environment. End users receive the bundled VSIX and do not need Node.js, npm, npx, or a network download.
 
 ## Install Behavior
 
@@ -84,7 +84,7 @@ reopening the full plan only after a real plan change or missing recovery state.
 After installation, run:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "%LOCALAPPDATA%\Programs\Markplane\Test-MarkplaneAgentSkills.ps1"
+powershell -ExecutionPolicy Bypass -File "%LOCALAPPDATA%\Programs\ResearchWithCodingAgents\Test-MarkplaneAgentSkills.ps1"
 ```
 
 The check verifies the managed Codex/Claude hint blocks, the installed `using-superpowers` skill, and `SUPERPOWERS_DISABLE_TELEMETRY=1`.

@@ -1,5 +1,6 @@
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$skills = Join-Path $root "skills"
+$repoRoot = Split-Path -Parent (Split-Path -Parent $root)
+$skills = Join-Path $repoRoot "components\superpowers\skills"
 
 function Read-SkillText {
     param([Parameter(Mandatory = $true)][string]$RelativePath)

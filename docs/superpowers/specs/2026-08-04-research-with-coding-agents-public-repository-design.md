@@ -57,13 +57,13 @@ The project uses three GitHub repositories:
    fork relationship remains visible and the fork retains Superpowers' MIT license
    and upstream history.
 
-The main repository pins reviewed fork commits through Git submodules:
+The main repository exposes reviewed component source trees directly until the public fork remotes are attached:
 
 ```text
 research-with-coding-agents/
 |-- components/
-|   |-- markplane/              # Git submodule: maintained Markplane fork
-|   `-- superpowers/            # Git submodule: maintained Superpowers fork
+|   |-- markplane/              # maintained Markplane source tree
+|   `-- superpowers/            # maintained Superpowers source tree
 |-- packages/
 |   |-- project-skills/         # Research With Coding Agents-owned skills
 |   |-- agent-adapters/         # Codex, Claude Code, Gemini/Antigravity adapters
@@ -81,9 +81,9 @@ research-with-coding-agents/
 `-- README.md
 ```
 
-Consumers clone with `git clone --recurse-submodules`. A missing or dirty submodule
+Consumers clone with a normal `git clone`. After public fork remotes or submodules are attached, a missing or dirty component
 is a build error for release workflows. The main repository never duplicates full
-component source trees outside the submodules.
+component source trees outside the recorded component paths.
 
 ## Product Boundaries
 
@@ -130,7 +130,7 @@ is installed later. Foreign copies are reported but not deleted.
 Each release records:
 
 - the main repository tag and commit;
-- both submodule commit IDs and upstream repository URLs;
+- component source state and upstream repository URLs;
 - component versions;
 - source and binary hashes;
 - test and platform status.
@@ -172,7 +172,7 @@ manual use without claiming full automatic agent registration.
 
 The release build:
 
-1. checks out both submodules recursively at pinned commits;
+1. checks out the component source trees recorded in this repository;
 2. builds the Markplane CLI, MCP server, and web UI;
 3. validates and packages the customized Superpowers tree and project skills;
 4. packages the interface extension as a VSIX in the controlled build environment;
@@ -265,7 +265,7 @@ separately maintained extension repository.
 
 ## CI And Release Governance
 
-Pull requests run recursive submodule validation, formatting, linting, unit tests,
+Pull requests run component provenance validation, formatting, linting, unit tests,
 integration tests, extension schema tests, VSIX packaging tests, PowerShell parser
 and Pester tests, and an isolated installer smoke test. Repository hygiene checks
 reject tracked build outputs, dependency directories, secrets, large unintended
@@ -283,7 +283,7 @@ parity.
 
 Automated jobs may report new upstream Markplane and Superpowers commits, but never
 merge them. Maintainers review and test changes in the relevant fork first. The
-main repository then receives a separate pull request updating one submodule
+main repository then receives a separate pull request updating one component source state
 pointer and its provenance record.
 
 ## Documentation And Contribution Flow
@@ -307,7 +307,7 @@ only in one component fork, or across all three without flattening their histori
 
 ## Error Handling
 
-- Missing or uninitialized submodule: fail with the exact path and recursive clone
+- Missing component source tree: fail with the exact path and clone
   command.
 - Dirty or unrecorded component state in a release: fail before building artifacts.
 - Missing license or provenance record: fail CI and identify the component.
@@ -327,7 +327,7 @@ only in one component fork, or across all three without flattening their histori
 ## Acceptance Criteria
 
 - GitHub presents one clearly named Research With Coding Agents product repository
-  with Markplane and Superpowers pinned as official fork submodules.
+  with Markplane and Superpowers present as official maintained component paths.
 - A new Windows user can install the required core and selected integrations from
   one offline setup executable and pass the health check.
 - Codex, Claude Code, and Gemini/Antigravity use the bundled customized Superpowers

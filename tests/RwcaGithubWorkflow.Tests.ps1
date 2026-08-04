@@ -13,11 +13,10 @@ Describe "Research With Coding Agents GitHub project files" {
         }
     }
 
-    It "uses recursive checkout and local release verification commands" {
+    It "uses local release verification commands" {
         $releaseWorkflow = Get-Content -Raw -LiteralPath (Join-Path $repoRoot ".github\workflows\windows-release.yml")
         $hygieneWorkflow = Get-Content -Raw -LiteralPath (Join-Path $repoRoot ".github\workflows\repo-hygiene.yml")
 
-        $releaseWorkflow | Should Match "submodules: recursive"
         $releaseWorkflow | Should Match "Invoke-Pester"
         $releaseWorkflow | Should Match "Build-RwcaRelease.ps1"
         $releaseWorkflow | Should Match "windows-latest"

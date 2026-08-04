@@ -1,6 +1,7 @@
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$repoRoot = Split-Path -Parent (Split-Path -Parent $root)
 $installer = Join-Path $root "Install-CodexHooks.ps1"
-$adapter = Join-Path $root "hooks\Invoke-MarkplaneCodexHook.ps1"
+$adapter = Join-Path $repoRoot "packages\agent-adapters\hooks\Invoke-MarkplaneCodexHook.ps1"
 
 Describe "Codex hook installer" {
     It "ships the installer and adapter" {

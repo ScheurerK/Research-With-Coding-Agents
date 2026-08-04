@@ -2,7 +2,7 @@
 
 Research With Coding Agents is a Windows-first local research workflow package for coding agents. It bundles a tested Markplane task system, a project-maintained Superpowers distribution, research skills, agent hooks, and the Markplane UI integration for VS Code and Antigravity.
 
-Markplane is a core component, not the name of the complete product. Superpowers is shipped from this project's maintained fork so Codex, Claude Code, and Gemini/Antigravity use the same local skills and rules instead of a standard copy from the network.
+Markplane is a core component, not the name of the complete product. Superpowers is shipped from this project's maintained source tree so Codex, Claude Code, and Gemini/Antigravity use the same local skills and rules instead of a standard copy from the network.
 
 ## Install On Windows
 
@@ -22,14 +22,14 @@ The installer can register optional integrations for Codex, Claude Code, Gemini/
 
 ## Clone And Build
 
-Use a recursive clone so the pinned component forks are present:
+A normal clone contains the public project structure:
 
 ```powershell
-git clone --recurse-submodules https://github.com/<owner>/research-with-coding-agents.git
+git clone https://github.com/<owner>/research-with-coding-agents.git
 cd research-with-coding-agents
 ```
 
-This repository is designed so contributors can work at any depth: product packaging, project skills, agent adapters, local extensions, the maintained Markplane fork, or the maintained Superpowers fork.
+This repository is designed so contributors can work at any depth: product packaging, project skills, agent adapters, local extensions, the maintained Markplane source, or the maintained Superpowers source. Once the public upstream forks are attached as GitHub remotes or submodules, use `UPSTREAM.md` as the authority for sync and provenance.
 
 ## Local Extensions
 
@@ -47,11 +47,11 @@ Windows is the supported first public release target. macOS and Linux source bui
 
 ## Repository Boundaries
 
-- `components/markplane` is the maintained fork of `zerowand01/markplane`.
-- `components/superpowers` is the maintained fork of `obra/superpowers`.
-- `packages/project-skills` contains Research With Coding Agents-owned skills.
-- `packages/agent-adapters` contains Codex, Claude Code, and Gemini/Antigravity adapters.
-- `packages/vscode-extension` contains the Markplane interface extension source.
-- `MarkplaneInstaller` contains the current Windows installer implementation.
+- `components/markplane` contains the maintained Markplane source linked to `zerowand01/markplane`.
+- `components/superpowers/skills` is the authoritative customized Superpowers skill tree used by every installer integration.
+- `packages/project-skills` contains Research With Coding Agents-owned skills and packaged adapted skills.
+- `packages/agent-adapters` contains Codex, Claude Code, and Gemini/Antigravity hooks and templates.
+- `packages/vscode-extension/source` contains the Markplane interface extension source.
+- `installer/windows` contains the current Windows installer implementation.
 
 See `CONTRIBUTING.md`, `UPSTREAM.md`, and `THIRD_PARTY_NOTICES.md` before changing component boundaries or release packaging.

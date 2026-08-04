@@ -1,4 +1,4 @@
-﻿$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 
 function New-BuildFixture {
     param(
@@ -51,7 +51,7 @@ $buildCases = @(
     @{
         BuildScriptName = "Build-AgentInstaller.ps1"
         IssName = "MarkplaneAgentInstaller.iss"
-        OutputName = "MarkplaneAgentSetup-0.1.2.exe"
+        OutputName = "ResearchWithCodingAgentsAgentSetup-v0.1.0.exe"
     }
 )
 

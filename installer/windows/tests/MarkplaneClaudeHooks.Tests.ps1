@@ -1,5 +1,6 @@
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$module = Join-Path $root "hooks\MarkplaneClaudeHooks.psm1"
+$repoRoot = Split-Path -Parent (Split-Path -Parent $root)
+$module = Join-Path $repoRoot "packages\agent-adapters\hooks\MarkplaneClaudeHooks.psm1"
 
 Describe "Markplane Claude hook runtime" {
     It "ships the runtime module" {

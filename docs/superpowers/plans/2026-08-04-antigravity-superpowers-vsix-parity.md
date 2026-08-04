@@ -4,7 +4,7 @@
 
 **Goal:** Make Markplane's customized Superpowers bundle authoritative and fully usable in Antigravity, migrate hooks to the current schema, and install the Markplane interface through a bundled VSIX and official IDE CLIs.
 
-**Architecture:** Keep `MarkplaneInstaller/skills` as the only Superpowers source and reconcile the namespaced Antigravity plugin exactly against it. Translate portable workflows through an always-available Antigravity mapping rule, validate the complete installed tree, generate current hook JSON, and replace source-folder extension copies with build-time VSIX packaging plus CLI installation and registration checks.
+**Architecture:** Keep `components/superpowers/skills` as the only Superpowers source and reconcile the namespaced Antigravity plugin exactly against it. Translate portable workflows through an always-available Antigravity mapping rule, validate the complete installed tree, generate current hook JSON, and replace source-folder extension copies with build-time VSIX packaging plus CLI installation and registration checks.
 
 **Tech Stack:** Windows PowerShell 5.1, Pester 3.4.0, Inno Setup, `@vscode/vsce`, VS Code-compatible extension CLIs, Markdown agent skills.
 
@@ -14,7 +14,7 @@
 
 ## Global Constraints
 
-- `MarkplaneInstaller/skills` is the sole authoritative Superpowers source.
+- `components/superpowers/skills` is the sole authoritative Superpowers source.
 - End-user installation must not download or update Superpowers or require Node.js, npm, or `npx`.
 - Same-named external skills are preserved and warned about, never deleted.
 - Markplane plugin drift fails the health check; unrelated configuration is preserved.
@@ -28,25 +28,25 @@
 
 ## File Structure
 
-- `MarkplaneInstaller/Install-AntigravityIntegration.ps1`: owns plugin reconciliation, priority instructions, mapping rule, and Antigravity hook registration.
-- `MarkplaneInstaller/skills/using-superpowers/references/antigravity-tools.md`: canonical Antigravity action mapping.
-- `MarkplaneInstaller/Test-MarkplaneAgentSkills.ps1`: validates exact skill parity, priority rules, mappings, hooks, and conflict warnings.
-- `MarkplaneInstaller/Package-VSCodeExtension.ps1`: packages the extension source into the deterministic VSIX payload.
-- `MarkplaneInstaller/Install-VSCodeExtension.ps1`: installs, verifies, and uninstalls the VSIX through available IDE CLIs.
-- `MarkplaneInstaller/Build-Installer.ps1` and `MarkplaneInstaller/Build-AgentInstaller.ps1`: package the VSIX before invoking Inno Setup.
-- `MarkplaneInstaller/MarkplaneInstaller.iss` and `MarkplaneInstaller/MarkplaneAgentInstaller.iss`: include and pass the VSIX payload.
-- `MarkplaneInstaller/tests/Install-AntigravityIntegration.Tests.ps1`: integration and health-check regression coverage.
-- `MarkplaneInstaller/tests/Invoke-MarkplaneAntigravityHook.Tests.ps1`: hook adapter contract smoke tests.
-- `MarkplaneInstaller/tests/Package-VSCodeExtension.Tests.ps1`: deterministic packaging tests.
-- `MarkplaneInstaller/tests/Install-VSCodeExtension.Tests.ps1`: fake-CLI installation, verification, warning, and uninstall tests.
-- `MarkplaneInstaller/README.md`: documents authoritative skills, current hooks, VSIX installation, reload, and build prerequisites.
+- `installer/windows/Install-AntigravityIntegration.ps1`: owns plugin reconciliation, priority instructions, mapping rule, and Antigravity hook registration.
+- `components/superpowers/skills/using-superpowers/references/antigravity-tools.md`: canonical Antigravity action mapping.
+- `installer/windows/Test-MarkplaneAgentSkills.ps1`: validates exact skill parity, priority rules, mappings, hooks, and conflict warnings.
+- `installer/windows/Package-VSCodeExtension.ps1`: packages the extension source into the deterministic VSIX payload.
+- `installer/windows/Install-VSCodeExtension.ps1`: installs, verifies, and uninstalls the VSIX through available IDE CLIs.
+- `installer/windows/Build-Installer.ps1` and `installer/windows/Build-AgentInstaller.ps1`: package the VSIX before invoking Inno Setup.
+- `installer/windows/MarkplaneInstaller.iss` and `installer/windows/MarkplaneAgentInstaller.iss`: include and pass the VSIX payload.
+- `installer/windows/tests/Install-AntigravityIntegration.Tests.ps1`: integration and health-check regression coverage.
+- `installer/windows/tests/Invoke-MarkplaneAntigravityHook.Tests.ps1`: hook adapter contract smoke tests.
+- `installer/windows/tests/Package-VSCodeExtension.Tests.ps1`: deterministic packaging tests.
+- `installer/windows/tests/Install-VSCodeExtension.Tests.ps1`: fake-CLI installation, verification, warning, and uninstall tests.
+- `installer/windows/README.md`: documents authoritative skills, current hooks, VSIX installation, reload, and build prerequisites.
 
 ### Task 1: Authoritative Plugin Reconciliation And Tool Mapping
 
 **Files:**
-- Modify: `MarkplaneInstaller/tests/Install-AntigravityIntegration.Tests.ps1`
-- Modify: `MarkplaneInstaller/Install-AntigravityIntegration.ps1`
-- Modify: `MarkplaneInstaller/skills/using-superpowers/references/antigravity-tools.md`
+- Modify: `installer/windows/tests/Install-AntigravityIntegration.Tests.ps1`
+- Modify: `installer/windows/Install-AntigravityIntegration.ps1`
+- Modify: `components/superpowers/skills/using-superpowers/references/antigravity-tools.md`
 
 **Interfaces:**
 - Consumes: `-SkillSourceRoot`, `-AgentsHintPath`, and the existing `markplane` plugin layout.
@@ -97,7 +97,7 @@ foreach ($sourceFile in $sourceFiles) {
 Run:
 
 ```powershell
-powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester '.\MarkplaneInstaller\tests\Install-AntigravityIntegration.Tests.ps1' -PassThru"
+powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester '.\installer\windows\tests\Install-AntigravityIntegration.Tests.ps1' -PassThru"
 ```
 
 Expected: at least one failure for the stale skill, missing `superpowers-antigravity.md`, or missing authoritative instruction.
@@ -173,8 +173,8 @@ Expected: all tests in `Install-AntigravityIntegration.Tests.ps1` pass.
 - [x] **Step 6: Record the task checkpoint**
 
 ```powershell
-.\MarkplaneInstaller\markplane.exe sync
-.\MarkplaneInstaller\markplane.exe check
+.\installer\windows\markplane.exe sync
+.\installer\windows\markplane.exe check
 ```
 
 Expected: sync succeeds and check reports no broken references. In a Git checkout, additionally commit these three files with `feat: prioritize bundled superpowers in antigravity`.
@@ -182,8 +182,8 @@ Expected: sync succeeds and check reports no broken references. In a Git checkou
 ### Task 2: Exact Health Check And Non-Destructive Conflict Warning
 
 **Files:**
-- Modify: `MarkplaneInstaller/tests/Install-AntigravityIntegration.Tests.ps1`
-- Modify: `MarkplaneInstaller/Test-MarkplaneAgentSkills.ps1`
+- Modify: `installer/windows/tests/Install-AntigravityIntegration.Tests.ps1`
+- Modify: `installer/windows/Test-MarkplaneAgentSkills.ps1`
 
 **Interfaces:**
 - Consumes: package `skills` root, Gemini root, and installed `markplane` plugin.
@@ -279,9 +279,9 @@ Run Markplane sync and check. In a Git checkout, commit with `test: verify antig
 ### Task 3: Current Antigravity Hook Schema And Adapter Contracts
 
 **Files:**
-- Modify: `MarkplaneInstaller/tests/Install-AntigravityIntegration.Tests.ps1`
-- Create: `MarkplaneInstaller/tests/Invoke-MarkplaneAntigravityHook.Tests.ps1`
-- Modify: `MarkplaneInstaller/Install-AntigravityIntegration.ps1`
+- Modify: `installer/windows/tests/Install-AntigravityIntegration.Tests.ps1`
+- Create: `installer/windows/tests/Invoke-MarkplaneAntigravityHook.Tests.ps1`
+- Modify: `installer/windows/Install-AntigravityIntegration.ps1`
 
 **Interfaces:**
 - Consumes: documented Antigravity camelCase hook payloads.
@@ -331,7 +331,7 @@ Describe "Antigravity hook adapter contract" {
 - [x] **Step 2: Run both focused files and confirm RED**
 
 ```powershell
-powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester @('.\MarkplaneInstaller\tests\Install-AntigravityIntegration.Tests.ps1','.\MarkplaneInstaller\tests\Invoke-MarkplaneAntigravityHook.Tests.ps1') -PassThru"
+powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester @('.\installer\windows\tests\Install-AntigravityIntegration.Tests.ps1','.\installer\windows\tests\Invoke-MarkplaneAntigravityHook.Tests.ps1') -PassThru"
 ```
 
 Expected: installer test fails because direct handlers are not present.
@@ -383,16 +383,16 @@ Run Markplane sync and check. In a Git checkout, commit with `fix: update antigr
 ### Task 4: Deterministic Build-Time VSIX Packaging
 
 **Files:**
-- Create: `MarkplaneInstaller/Package-VSCodeExtension.ps1`
-- Create: `MarkplaneInstaller/tests/Package-VSCodeExtension.Tests.ps1`
-- Modify: `MarkplaneInstaller/Build-Installer.ps1`
-- Modify: `MarkplaneInstaller/Build-AgentInstaller.ps1`
-- Modify: `MarkplaneInstaller/MarkplaneInstaller.iss`
-- Modify: `MarkplaneInstaller/MarkplaneAgentInstaller.iss`
+- Create: `installer/windows/Package-VSCodeExtension.ps1`
+- Create: `installer/windows/tests/Package-VSCodeExtension.Tests.ps1`
+- Modify: `installer/windows/Build-Installer.ps1`
+- Modify: `installer/windows/Build-AgentInstaller.ps1`
+- Modify: `installer/windows/MarkplaneInstaller.iss`
+- Modify: `installer/windows/MarkplaneAgentInstaller.iss`
 
 **Interfaces:**
 - Consumes: `vscode-extension/package.json` version `0.1.2` and either `vsce` or `npx` in the build environment.
-- Produces: `MarkplaneInstaller/vscode-extension/markplane-vscode-0.1.2.vsix` before Inno compilation.
+- Produces: `installer/windows/vscode-extension/markplane-vscode-0.1.2.vsix` before Inno compilation.
 
 - [x] **Step 1: Write a failing packaging test**
 
@@ -438,7 +438,7 @@ if ($index -lt 0) { exit 2 }
 - [x] **Step 2: Run the packaging test and confirm RED**
 
 ```powershell
-powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester '.\MarkplaneInstaller\tests\Package-VSCodeExtension.Tests.ps1' -PassThru"
+powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester '.\installer\windows\tests\Package-VSCodeExtension.Tests.ps1' -PassThru"
 ```
 
 Expected: failures because the packager and VSIX wiring do not exist.
@@ -511,10 +511,10 @@ Run Markplane sync and check. In a Git checkout, commit with `build: package mar
 ### Task 5: CLI-Based Extension Install, Verification, And Uninstall
 
 **Files:**
-- Modify: `MarkplaneInstaller/tests/Install-VSCodeExtension.Tests.ps1`
-- Modify: `MarkplaneInstaller/Install-VSCodeExtension.ps1`
-- Modify: `MarkplaneInstaller/MarkplaneInstaller.iss`
-- Modify: `MarkplaneInstaller/MarkplaneAgentInstaller.iss`
+- Modify: `installer/windows/tests/Install-VSCodeExtension.Tests.ps1`
+- Modify: `installer/windows/Install-VSCodeExtension.ps1`
+- Modify: `installer/windows/MarkplaneInstaller.iss`
+- Modify: `installer/windows/MarkplaneAgentInstaller.iss`
 
 **Interfaces:**
 - Consumes: `-VsixPath`, optional `-VSCodeCli` and `-AntigravityCli`, skip switches, and `-Uninstall`.
@@ -581,7 +581,7 @@ Describe "Markplane VS Code family extension installer" {
 - [x] **Step 2: Run the extension test and confirm RED**
 
 ```powershell
-powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester '.\MarkplaneInstaller\tests\Install-VSCodeExtension.Tests.ps1' -PassThru"
+powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester '.\installer\windows\tests\Install-VSCodeExtension.Tests.ps1' -PassThru"
 ```
 
 Expected: parameter-binding failures for `-VsixPath`, `-VSCodeCli`, or `-AntigravityCli`.
@@ -676,7 +676,7 @@ Run Markplane sync and check. In a Git checkout, commit with `fix: install markp
 ### Task 6: Documentation, Full Regression, And Local Smoke Verification
 
 **Files:**
-- Modify: `MarkplaneInstaller/README.md`
+- Modify: `installer/windows/README.md`
 - Update: `PLAN-48fdt` completion checklist and evidence during execution.
 
 **Interfaces:**
@@ -700,13 +700,13 @@ Remove claims that direct extension-root copying is supported.
 
 ```powershell
 $files = @(
-    '.\MarkplaneInstaller\Install-AntigravityIntegration.ps1',
-    '.\MarkplaneInstaller\Test-MarkplaneAgentSkills.ps1',
-    '.\MarkplaneInstaller\Package-VSCodeExtension.ps1',
-    '.\MarkplaneInstaller\Install-VSCodeExtension.ps1',
-    '.\MarkplaneInstaller\Build-Installer.ps1',
-    '.\MarkplaneInstaller\Build-AgentInstaller.ps1',
-    '.\MarkplaneInstaller\hooks\Invoke-MarkplaneAntigravityHook.ps1'
+    '.\installer\windows\Install-AntigravityIntegration.ps1',
+    '.\installer\windows\Test-MarkplaneAgentSkills.ps1',
+    '.\installer\windows\Package-VSCodeExtension.ps1',
+    '.\installer\windows\Install-VSCodeExtension.ps1',
+    '.\installer\windows\Build-Installer.ps1',
+    '.\installer\windows\Build-AgentInstaller.ps1',
+    '.\packages\agent-adapters\hooks\Invoke-MarkplaneAntigravityHook.ps1'
 )
 foreach ($file in $files) {
     $errors = $null
@@ -720,7 +720,7 @@ Expected: no exception.
 - [x] **Step 3: Run all focused tests together**
 
 ```powershell
-powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester @('.\MarkplaneInstaller\tests\Install-AntigravityIntegration.Tests.ps1','.\MarkplaneInstaller\tests\Invoke-MarkplaneAntigravityHook.Tests.ps1','.\MarkplaneInstaller\tests\Package-VSCodeExtension.Tests.ps1','.\MarkplaneInstaller\tests\Install-VSCodeExtension.Tests.ps1') -PassThru"
+powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester @('.\installer\windows\tests\Install-AntigravityIntegration.Tests.ps1','.\installer\windows\tests\Invoke-MarkplaneAntigravityHook.Tests.ps1','.\installer\windows\tests\Package-VSCodeExtension.Tests.ps1','.\installer\windows\tests\Install-VSCodeExtension.Tests.ps1') -PassThru"
 ```
 
 Expected: zero failed tests.
@@ -728,7 +728,7 @@ Expected: zero failed tests.
 - [x] **Step 4: Run the complete Pester suite**
 
 ```powershell
-powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester '.\MarkplaneInstaller\tests' -PassThru"
+powershell -NoProfile -Command "Import-Module Pester -RequiredVersion 3.4.0; Invoke-Pester '.\installer\windows\tests' -PassThru"
 ```
 
 Expected: `FailedCount` is `0`.
@@ -736,30 +736,30 @@ Expected: `FailedCount` is `0`.
 - [x] **Step 5: Build the real VSIX**
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\MarkplaneInstaller\Package-VSCodeExtension.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\installer\windows\Package-VSCodeExtension.ps1
 ```
 
-Expected: `MarkplaneInstaller\vscode-extension\markplane-vscode-0.1.2.vsix` exists and the command exits `0`. This command may download `@vscode/vsce` only in the build environment when `vsce.cmd` is absent.
+Expected: `packages\vscode-extension\source\markplane-vscode-0.1.2.vsix` exists and the command exits `0`. This command may download `@vscode/vsce` only in the build environment when `vsce.cmd` is absent.
 
 - [x] **Step 6: Build both Inno installers when the compiler prerequisite is available**
 
 **Executed (2026-08-04):** Inno Setup 6.7.3 was found under the user-local Programs directory. Both build commands completed successfully after removing their exact stale outputs, and fresh installer executables were produced.
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\MarkplaneInstaller\Build-Installer.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File .\MarkplaneInstaller\Build-AgentInstaller.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\installer\windows\Build-Installer.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\installer\windows\Build-AgentInstaller.ps1
 ```
 
-Verified: `MarkplaneInstaller\Output\MarkplaneSetup-0.1.2.exe` and `MarkplaneInstaller\Output\MarkplaneAgentSetup-0.1.2.exe` exist as fresh Inno 6.7.3 outputs.
+Verified: `installer\windows\Output\MarkplaneSetup-0.1.2.exe` and `installer\windows\Output\MarkplaneAgentSetup-0.1.2.exe` exist as fresh Inno 6.7.3 outputs.
 
 - [x] **Step 7: Apply and verify the local Antigravity integration**
 
 After receiving permission to modify the user profile, run:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\MarkplaneInstaller\Install-AntigravityIntegration.ps1 -InstallDir .\MarkplaneInstaller -SkillSourceRoot .\MarkplaneInstaller\skills -AgentsHintPath .\MarkplaneInstaller\research-checkpoint-agents-extension.txt
-powershell -NoProfile -ExecutionPolicy Bypass -File .\MarkplaneInstaller\Install-VSCodeExtension.ps1 -VsixPath .\MarkplaneInstaller\vscode-extension\markplane-vscode-0.1.2.vsix -SkipVSCode
-powershell -NoProfile -ExecutionPolicy Bypass -File .\MarkplaneInstaller\Test-MarkplaneAgentSkills.ps1 -SkipCodex -SkipClaude -SkillSourceRoot .\MarkplaneInstaller\skills
+powershell -NoProfile -ExecutionPolicy Bypass -File .\installer\windows\Install-AntigravityIntegration.ps1 -InstallDir .\installer/windows -SkillSourceRoot .\components\superpowers\skills -AgentsHintPath .\installer\windows\research-checkpoint-agents-extension.txt
+powershell -NoProfile -ExecutionPolicy Bypass -File .\installer\windows\Install-VSCodeExtension.ps1 -VsixPath .\packages\vscode-extension\source\markplane-vscode-0.1.2.vsix -SkipVSCode
+powershell -NoProfile -ExecutionPolicy Bypass -File .\installer\windows\Test-MarkplaneAgentSkills.ps1 -SkipCodex -SkipClaude -SkillSourceRoot .\components\superpowers\skills
 & "$env:LOCALAPPDATA\Programs\Antigravity IDE\bin\antigravity-ide.cmd" --list-extensions --show-versions | Select-String '^local\.markplane-vscode@0\.1\.2$'
 ```
 
@@ -770,9 +770,9 @@ Expected: health check passes and Antigravity lists `local.markplane-vscode@0.1.
 Update `PLAN-48fdt` and `TASK-cv9gy` with exact test counts, parser result, VSIX path, local CLI verification, and any Inno prerequisite limitation. Then run:
 
 ```powershell
-.\MarkplaneInstaller\markplane.exe sync
-.\MarkplaneInstaller\markplane.exe check
-.\MarkplaneInstaller\markplane.exe done TASK-cv9gy
+.\installer\windows\markplane.exe sync
+.\installer\windows\markplane.exe check
+.\installer\windows\markplane.exe done TASK-cv9gy
 ```
 
 Mark the task done only when all required implementation and available verification steps pass. In a Git checkout, commit documentation and final evidence with `docs: document antigravity superpowers and vsix integration`.

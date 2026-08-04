@@ -1,8 +1,8 @@
-﻿# Research With Coding Agents Public Repository Implementation Plan
+# Research With Coding Agents Public Repository Implementation Plan
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 **Goal:** Convert the local Markplane/Superpowers package into the public Research With Coding Agents source and Windows distribution.
-**Architecture:** Keep the existing working MarkplaneInstaller scripts as the first delivery path, then introduce the public repository envelope around them. The installer consumes only local, pinned payloads, registers the Markplane UI through VSIX CLI installation, and makes the project-maintained Superpowers copy authoritative for Codex, Claude Code, and Gemini/Antigravity.
-**Tech Stack:** PowerShell 5.1+, Pester, Inno Setup 6, Rust/Cargo, Node.js/npm, `@vscode/vsce`, Git submodules, SPDX JSON, GitHub Actions.
+**Architecture:** Keep the existing working installer/windows scripts as the first delivery path, then introduce the public repository envelope around them. The installer consumes only local, pinned payloads, registers the Markplane UI through VSIX CLI installation, and makes the project-maintained Superpowers copy authoritative for Codex, Claude Code, and Gemini/Antigravity.
+**Tech Stack:** PowerShell 5.1+, Pester, Inno Setup 6, Rust/Cargo, Node.js/npm, `@vscode/vsce`, component source provenance, SPDX JSON, GitHub Actions.
 ## Global Constraints
 - Product name: `Research With Coding Agents`.
 - Main repository slug: `research-with-coding-agents`.
@@ -23,8 +23,8 @@
 - Root public files: `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `UPSTREAM.md`, `LICENSE`, `THIRD_PARTY_NOTICES.md`, `.gitignore`, `.gitattributes`, `CLAUDE.md`.
 - Legal/package docs: `LICENSES/*.txt`, `components/README.md`, `packages/**/README.md`, `extensions/README.md`.
 - Release scripts: `scripts/Get-RwcaProvenance.ps1`, `scripts/Test-RwcaDistributionReadiness.ps1`, `scripts/New-RwcaChecksums.ps1`, `scripts/New-RwcaSbom.ps1`, `scripts/Build-RwcaRelease.ps1`.
-- Tests: `tests/RwcaProvenance.Tests.ps1`, `tests/RwcaDistributionReadiness.Tests.ps1`, `tests/RwcaInstallerNaming.Tests.ps1`, plus existing `MarkplaneInstaller/tests/*.Tests.ps1`.
-- Installer changes: `MarkplaneInstaller/Build-Installer.ps1`, `MarkplaneInstaller/MarkplaneInstaller.iss`, `MarkplaneInstaller/README.md`, install/integration scripts, VSIX packaging script.
+- Tests: `tests/RwcaProvenance.Tests.ps1`, `tests/RwcaDistributionReadiness.Tests.ps1`, `tests/RwcaInstallerNaming.Tests.ps1`, plus existing `installer/windows/tests/*.Tests.ps1`.
+- Installer changes: `installer/windows/Build-Installer.ps1`, `installer/windows/MarkplaneInstaller.iss`, `installer/windows/README.md`, install/integration scripts, VSIX packaging script.
 - GitHub files: `.github/workflows/*.yml`, `.github/ISSUE_TEMPLATE/*.yml`, `.github/pull_request_template.md`.
 ### Task 1: Public Repository Envelope
 **Files:**
@@ -66,54 +66,54 @@ Run: `Invoke-Pester .\tests\RwcaProvenance.Tests.ps1 -Output Detailed`
 Expected: PASS.
 ### Task 3: Unified Installer Identity
 **Files:**
-- Modify: `MarkplaneInstaller/Build-Installer.ps1`, `MarkplaneInstaller/MarkplaneInstaller.iss`, `MarkplaneInstaller/README.md`.
-- Test: `MarkplaneInstaller/tests/Build-Installer.Tests.ps1`, `tests/RwcaInstallerNaming.Tests.ps1`.
+- Modify: `installer/windows/Build-Installer.ps1`, `installer/windows/MarkplaneInstaller.iss`, `installer/windows/README.md`.
+- Test: `installer/windows/tests/Build-Installer.Tests.ps1`, `tests/RwcaInstallerNaming.Tests.ps1`.
 **Interfaces:**
-- Produces: installer output `MarkplaneInstaller/Output/ResearchWithCodingAgentsSetup-v0.1.0.exe`.
+- Produces: installer output `installer/windows/Output/ResearchWithCodingAgentsSetup-v0.1.0.exe`.
 - Keeps: existing `-InnoSetupCompiler <path>` test hook.
 - [ ] **Step 1: Write failing installer naming tests**
 Assert that `MarkplaneInstaller.iss` contains `AppName=Research With Coding Agents`, `DefaultDirName={localappdata}\Programs\ResearchWithCodingAgents`, and `OutputBaseFilename=ResearchWithCodingAgentsSetup-v0.1.0`.
 - [ ] **Step 2: Run tests to verify failure**
-Run: `Invoke-Pester .\tests\RwcaInstallerNaming.Tests.ps1,.\MarkplaneInstaller\tests\Build-Installer.Tests.ps1 -Output Detailed`
+Run: `Invoke-Pester .\tests\RwcaInstallerNaming.Tests.ps1,.\installer\windows\tests\Build-Installer.Tests.ps1 -Output Detailed`
 Expected: FAIL because current installer is still named Markplane.
 - [ ] **Step 3: Rename setup metadata**
 Update Inno metadata and `Build-Installer.ps1` expected output to `ResearchWithCodingAgentsSetup-v0.1.0.exe`; keep the existing AppId unless a clean product break is intentionally required before release.
 - [ ] **Step 4: Run installer naming tests**
-Run: `Invoke-Pester .\tests\RwcaInstallerNaming.Tests.ps1,.\MarkplaneInstaller\tests\Build-Installer.Tests.ps1 -Output Detailed`
+Run: `Invoke-Pester .\tests\RwcaInstallerNaming.Tests.ps1,.\installer\windows\tests\Build-Installer.Tests.ps1 -Output Detailed`
 Expected: PASS.
 ### Task 4: Authoritative Superpowers For All Agents
 **Files:**
-- Modify: `MarkplaneInstaller/Install-MarkplaneAgentSkills.ps1`, `MarkplaneInstaller/Install-AntigravityIntegration.ps1`, `MarkplaneInstaller/Test-MarkplaneAgentSkills.ps1`.
-- Test: `MarkplaneInstaller/tests/Install-MarkplaneAgentSkills.Tests.ps1`, `MarkplaneInstaller/tests/Install-AntigravityIntegration.Tests.ps1`.
+- Modify: `installer/windows/Install-MarkplaneAgentSkills.ps1`, `installer/windows/Install-AntigravityIntegration.ps1`, `installer/windows/Test-MarkplaneAgentSkills.ps1`.
+- Test: `installer/windows/tests/Install-MarkplaneAgentSkills.Tests.ps1`, `installer/windows/tests/Install-AntigravityIntegration.Tests.ps1`.
 **Interfaces:**
 - Produces: managed instructions for Codex, Claude Code, and Gemini/Antigravity that name the installed RWCA Superpowers path as authoritative.
 - Produces: detection warning for foreign Superpowers paths without deleting them.
 - [ ] **Step 1: Write failing agent authority tests**
 Assert that generated managed blocks include `Research With Coding Agents`, the install-local `skills` path, and `SUPERPOWERS_DISABLE_TELEMETRY=1`; assert uninstall removes only managed blocks.
 - [ ] **Step 2: Run tests to verify failure**
-Run: `Invoke-Pester .\MarkplaneInstaller\tests\Install-MarkplaneAgentSkills.Tests.ps1,.\MarkplaneInstaller\tests\Install-AntigravityIntegration.Tests.ps1 -Output Detailed`
+Run: `Invoke-Pester .\installer\windows\tests\Install-MarkplaneAgentSkills.Tests.ps1,.\installer\windows\tests\Install-AntigravityIntegration.Tests.ps1 -Output Detailed`
 Expected: FAIL where current copy still says Markplane-only or omits explicit RWCA authority.
 - [ ] **Step 3: Update managed block templates**
 Make Codex, Claude Code, and Gemini/Antigravity blocks point to `{app}\skills` and state that bundled RWCA Superpowers overrides network/default copies for this product.
 - [ ] **Step 4: Run agent authority tests**
-Run: `Invoke-Pester .\MarkplaneInstaller\tests\Install-MarkplaneAgentSkills.Tests.ps1,.\MarkplaneInstaller\tests\Install-AntigravityIntegration.Tests.ps1 -Output Detailed`
+Run: `Invoke-Pester .\installer\windows\tests\Install-MarkplaneAgentSkills.Tests.ps1,.\installer\windows\tests\Install-AntigravityIntegration.Tests.ps1 -Output Detailed`
 Expected: PASS.
 ### Task 5: VSIX-Only Markplane Interface Registration
 **Files:**
-- Modify: `MarkplaneInstaller/Install-VSCodeExtension.ps1`, `MarkplaneInstaller/Package-VSCodeExtension.ps1`.
-- Test: `MarkplaneInstaller/tests/Install-VSCodeExtension.Tests.ps1`, `MarkplaneInstaller/tests/Package-VSCodeExtension.Tests.ps1`.
+- Modify: `installer/windows/Install-VSCodeExtension.ps1`, `installer/windows/Package-VSCodeExtension.ps1`.
+- Test: `installer/windows/tests/Install-VSCodeExtension.Tests.ps1`, `installer/windows/tests/Package-VSCodeExtension.Tests.ps1`.
 **Interfaces:**
 - Produces: `Install-VSCodeExtension.ps1 -VsixPath <file> -ShowSummary` installs through `code --install-extension <vsix> --force` and Antigravity `antigravity-ide.cmd --install-extension <vsix> --force`.
 - Produces: no folder-copy fallback.
 - [ ] **Step 1: Write failing VSIX workflow tests**
 Assert CLI calls include `--install-extension`, the VSIX path, and `--force`; assert source-folder copy commands are absent.
 - [ ] **Step 2: Run tests**
-Run: `Invoke-Pester .\MarkplaneInstaller\tests\Install-VSCodeExtension.Tests.ps1,.\MarkplaneInstaller\tests\Package-VSCodeExtension.Tests.ps1 -Output Detailed`
+Run: `Invoke-Pester .\installer\windows\tests\Install-VSCodeExtension.Tests.ps1,.\installer\windows\tests\Package-VSCodeExtension.Tests.ps1 -Output Detailed`
 Expected: PASS if current implementation already matches the rule, otherwise FAIL with exact missing behavior.
 - [ ] **Step 3: Fix only failing VSIX behavior**
 Keep packaging through `npx @vscode/vsce package` fallback and remove any direct extension-folder installation path if found.
 - [ ] **Step 4: Run VSIX tests again**
-Run: `Invoke-Pester .\MarkplaneInstaller\tests\Install-VSCodeExtension.Tests.ps1,.\MarkplaneInstaller\tests\Package-VSCodeExtension.Tests.ps1 -Output Detailed`
+Run: `Invoke-Pester .\installer\windows\tests\Install-VSCodeExtension.Tests.ps1,.\installer\windows\tests\Package-VSCodeExtension.Tests.ps1 -Output Detailed`
 Expected: PASS.
 ### Task 6: Release Artifacts, Checksums, And SBOM
 **Files:**
@@ -137,7 +137,7 @@ Expected: PASS.
 **Interfaces:**
 - Produces: CI that runs Pester tests, PowerShell parser checks, Cargo tests, npm build checks, provenance checks, and tracked-artifact hygiene.
 - [ ] **Step 1: Write workflow files**
-Use Windows runners for installer and Pester gates; use recursive checkout in every job so submodule failures are visible.
+Use Windows runners for installer and Pester gates; validate component source paths and provenance in every job.
 - [ ] **Step 2: Validate workflow YAML syntax locally**
 Run: `Get-ChildItem .\.github\workflows\*.yml | ForEach-Object { $_.FullName }`
 Expected: both workflow files are present.
@@ -150,7 +150,7 @@ Expected: PASS.
 **Interfaces:**
 - Produces: task notes with exact verification commands and status.
 - [ ] **Step 1: Run installer/unit test suite**
-Run: `Invoke-Pester .\MarkplaneInstaller\tests,.\tests -Output Detailed`
+Run: `Invoke-Pester .\installer\windows\tests,.\tests -Output Detailed`
 Expected: PASS.
 - [ ] **Step 2: Run Markplane consistency checks**
 Run: `C:\Users\scheurer\.cargo\bin\markplane.exe sync`

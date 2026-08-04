@@ -1,6 +1,8 @@
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$skill = Join-Path $root "skills\research-repo-governance\SKILL.md"
-$fullGovernance = Join-Path $root "skills\research-repo-governance\references\full-governance.md"
+$repoRoot = Split-Path -Parent (Split-Path -Parent $root)
+$skills = Join-Path $repoRoot "components\superpowers\skills"
+$skill = Join-Path $skills "research-repo-governance\SKILL.md"
+$fullGovernance = Join-Path $skills "research-repo-governance\references\full-governance.md"
 
 Describe "Research repo governance agent-context preservation" {
     It "treats repo-specific AGENTS and CLAUDE files as additive local deltas" {

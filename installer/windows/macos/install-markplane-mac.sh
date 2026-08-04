@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Top-level orchestrator for the macOS Claude Code integration: MCP
 # registration, hooks, bundled skills, and the VS Code extension.
-# Mirrors MarkplaneInstaller/MarkplaneAgentInstaller.iss's [Run] sequence,
+# Mirrors installer/windows/MarkplaneAgentInstaller.iss's [Run] sequence,
 # minus binary installation — this script expects `markplane` to already be
 # on PATH (via Homebrew or install.sh; see README.md in this directory).
 set -u
@@ -51,7 +51,7 @@ fi
 if [ "$UNINSTALL" -eq 1 ]; then
   echo "Removing Markplane Claude Code integration..."
   "$SCRIPT_DIR/install-claude-code-hooks.sh" --install-dir "$SCRIPT_DIR" --uninstall
-  "$SCRIPT_DIR/install-agent-skills.sh" --skill-source-root "$SCRIPT_DIR/../skills" --uninstall
+  "$SCRIPT_DIR/install-agent-skills.sh" --skill-source-root "$SCRIPT_DIR/../../../components/superpowers/skills" --uninstall
   if [ "$SKIP_VSCODE" -eq 0 ]; then
     "$SCRIPT_DIR/install-vscode-extension.sh" --uninstall
   fi
@@ -80,10 +80,10 @@ fi
 echo "==> Using markplane binary: $MARKPLANE_EXE"
 
 "$SCRIPT_DIR/configure-claude-code.sh" --scope "$SCOPE" --markplane-exe "$MARKPLANE_EXE"
-"$SCRIPT_DIR/install-agent-skills.sh" --skill-source-root "$SCRIPT_DIR/../skills"
+"$SCRIPT_DIR/install-agent-skills.sh" --skill-source-root "$SCRIPT_DIR/../../../components/superpowers/skills"
 "$SCRIPT_DIR/install-claude-code-hooks.sh" --install-dir "$SCRIPT_DIR" --markplane-exe "$MARKPLANE_EXE" --max-context-chars "$MAX_CONTEXT_CHARS"
 if [ "$SKIP_VSCODE" -eq 0 ]; then
-  "$SCRIPT_DIR/install-vscode-extension.sh" --extension-source "$SCRIPT_DIR/../vscode-extension"
+  "$SCRIPT_DIR/install-vscode-extension.sh" --extension-source "$SCRIPT_DIR/../../../packages/vscode-extension/source"
 fi
 
 echo ""

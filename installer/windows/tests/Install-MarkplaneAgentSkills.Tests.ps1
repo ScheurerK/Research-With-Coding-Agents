@@ -1,8 +1,9 @@
-﻿$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$repoRoot = Split-Path -Parent (Split-Path -Parent $root)
 $installer = Join-Path $root "Install-MarkplaneAgentSkills.ps1"
 $healthCheck = Join-Path $root "Test-MarkplaneAgentSkills.ps1"
 $hint = Join-Path $root "research-checkpoint-agents-extension.txt"
-$skills = Join-Path $root "skills"
+$skills = Join-Path $repoRoot "components\superpowers\skills"
 
 Describe "Agent skill installer" {
     It "uses the default skill source root in a subprocess when all checks are skipped" {

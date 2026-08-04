@@ -12,8 +12,8 @@ if (-not $DistDir) {
     $DistDir = Join-Path $resolvedRepoRoot "dist"
 }
 
-$installerScript = Join-Path $resolvedRepoRoot "MarkplaneInstaller\Build-Installer.ps1"
-$installerOutput = Join-Path $resolvedRepoRoot "MarkplaneInstaller\Output\ResearchWithCodingAgentsSetup-v0.1.0.exe"
+$installerScript = Join-Path $resolvedRepoRoot "installer\windows\Build-Installer.ps1"
+$installerOutput = Join-Path $resolvedRepoRoot "installer\windows\Output\ResearchWithCodingAgentsSetup-v0.1.0.exe"
 $portableName = "ResearchWithCodingAgentsPortable-v0.1.0-win-x64.zip"
 
 if (-not $SkipInstallerBuild) {

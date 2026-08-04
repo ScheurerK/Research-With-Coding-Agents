@@ -1,6 +1,6 @@
 # Upstream And Fork Maintenance
 
-Research With Coding Agents keeps explicit upstream relationships for its two core component forks.
+Research With Coding Agents keeps explicit upstream relationships for its two core component sources.
 
 ## Markplane
 
@@ -8,7 +8,7 @@ Research With Coding Agents keeps explicit upstream relationships for its two co
 - Local path: `components/markplane`
 - License: Apache-2.0
 
-Markplane changes are reviewed in the maintained fork first. This product repository then updates the pinned submodule commit and provenance record.
+Markplane changes are reviewed against the maintained fork first. This product repository records the shipped source state and provenance. When the public fork remote or submodule is attached, update this file and `THIRD_PARTY_NOTICES.md` in the same change.
 
 ## Superpowers
 
@@ -16,7 +16,7 @@ Markplane changes are reviewed in the maintained fork first. This product reposi
 - Local path: `components/superpowers`
 - License: MIT
 
-Superpowers changes are reviewed in the maintained fork first. Runtime integrations must prefer the bundled Research With Coding Agents copy over any standard or foreign Superpowers copy.
+Superpowers changes are reviewed in `components/superpowers/skills` first. Runtime integrations must prefer the bundled Research With Coding Agents copy over any standard or foreign Superpowers copy.
 
 ## Update Rule
 

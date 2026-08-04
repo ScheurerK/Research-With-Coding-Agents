@@ -63,7 +63,7 @@ predictable.
 
 ### Bundled Skill Source
 
-`MarkplaneInstaller/skills` remains the single source of truth. The Antigravity
+`components/superpowers/skills` remains the single source of truth. The Antigravity
 installer must resolve and validate this source before changing the plugin. It must
 not call package managers, Git, web requests, or other network installation paths.
 
@@ -119,7 +119,7 @@ allows termination.
 
 ### Markplane Interface Extension
 
-The extension source in `MarkplaneInstaller/vscode-extension` is packaged as a VSIX
+The extension source in `packages/vscode-extension/source` is packaged as a VSIX
 during the Markplane installer build. Both Windows installer variants include that
 VSIX as payload. Packaging may use `@vscode/vsce` in the controlled build
 environment; the installed product never invokes `npx` or downloads build tools.

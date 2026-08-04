@@ -12,13 +12,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
 
       - name: Run PowerShell tests
         shell: powershell
         run: |
-          Invoke-Pester .\MarkplaneInstaller\tests,.\tests
+          Invoke-Pester .\installer\windows\tests,.\tests
 
       - name: Build release artifacts
         shell: powershell

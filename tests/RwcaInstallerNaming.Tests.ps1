@@ -1,5 +1,5 @@
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$installerRoot = Join-Path $repoRoot "MarkplaneInstaller"
+$installerRoot = Join-Path $repoRoot "installer\windows"
 
 Describe "Research With Coding Agents installer identity" {
     It "uses the public product identity in the Inno Setup definition" {

@@ -11,7 +11,7 @@ function New-RwcaReleaseFixture {
     Copy-Item -LiteralPath (Join-Path $repoRoot "LICENSES") -Destination (Join-Path $fixture "LICENSES") -Recurse
     Copy-Item -LiteralPath (Join-Path $repoRoot "docs") -Destination (Join-Path $fixture "docs") -Recurse
 
-    $installerOutput = Join-Path $fixture "MarkplaneInstaller\Output"
+    $installerOutput = Join-Path $fixture "installer\windows\Output"
     New-Item -ItemType Directory -Force -Path $installerOutput | Out-Null
     Set-Content -LiteralPath (Join-Path $installerOutput "ResearchWithCodingAgentsSetup-v0.1.0.exe") -Value "fake-installer"
 

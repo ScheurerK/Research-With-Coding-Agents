@@ -6,7 +6,7 @@ param(
 $ErrorActionPreference = "Stop"
 $scriptDir = if ($PSScriptRoot) { $PSScriptRoot } else { (Get-Location).Path }
 $issPath = Join-Path $scriptDir "MarkplaneAgentInstaller.iss"
-$output = Join-Path $scriptDir "Output\MarkplaneAgentSetup-0.1.2.exe"
+$output = Join-Path $scriptDir "Output\ResearchWithCodingAgentsAgentSetup-v0.1.0.exe"
 
 if (-not (Test-Path -LiteralPath $issPath -PathType Leaf)) {
     throw "Installer definition not found: $issPath"

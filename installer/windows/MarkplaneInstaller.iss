@@ -1,19 +1,19 @@
-#define MyAppName "Markplane MCP for Agents"
-#define MyAppVersion "0.1.2"
-#define MyAppPublisher "Local"
+#define MyAppName "Research With Coding Agents"
+#define MyAppVersion "0.1.0"
+#define MyAppPublisher "Research With Coding Agents"
 #define MyAppExeName "markplane.exe"
 
 [Setup]
-AppId={{6B7A3265-A262-4604-9D44-E022615682B7}
+AppId={{7E8F1C7D-1F1C-4F46-B5B1-5D533ED40A2B}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
-DefaultDirName={localappdata}\Programs\Markplane
-DefaultGroupName=Markplane
+DefaultDirName={localappdata}\Programs\ResearchWithCodingAgents
+DefaultGroupName=Research With Coding Agents
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 OutputDir=Output
-OutputBaseFilename=MarkplaneAgentSetup-{#MyAppVersion}
+OutputBaseFilename=ResearchWithCodingAgentsSetup-v0.1.0
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -26,23 +26,24 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
 Source: "markplane.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Install-MarkplaneForAgents.ps1"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Install-MarkplaneForCodex.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Install-VSCodeExtension.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Configure-ClaudeCode.ps1"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Install-ClaudeCodeHooks.ps1"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Install-CodexHooks.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Install-MarkplaneAgentSkills.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Install-AntigravityIntegration.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Install-AntigravityWorkspace.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Test-MarkplaneAgentSkills.ps1"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Install-ClaudeCodeHooks.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "research-checkpoint-agents-extension.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "skills\*"; DestDir: "{app}\skills"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "agent-config-templates\*"; DestDir: "{app}\agent-config-templates"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\components\superpowers\skills\*"; DestDir: "{app}\skills"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "markplane-agents-extension.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "vscode-extension\markplane-vscode-0.1.2.vsix"; DestDir: "{app}\vscode-extension"; Flags: ignoreversion
-Source: "hooks\*"; DestDir: "{app}\hooks"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\..\packages\agent-adapters\hooks\*"; DestDir: "{app}\hooks"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; Antigravity hook entrypoint: Invoke-MarkplaneAntigravityHook.ps1
 
 [Run]
-Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Install-MarkplaneForAgents.ps1"" -InstallDir ""{app}"""; Description: "Install Markplane and update user PATH"; Flags: runhidden waituntilterminated
+Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Install-MarkplaneForCodex.ps1"" -InstallDir ""{app}"" -AgentsExtensionPath ""{app}\markplane-agents-extension.txt"""; Description: "Configure PATH and Codex MCP integration"; Flags: runhidden waituntilterminated
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Configure-ClaudeCode.ps1"" -Scope user -MarkplaneExe ""{app}\markplane.exe"""; Description: "Configure Claude Code MCP integration"; Flags: runhidden waituntilterminated
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Install-MarkplaneAgentSkills.ps1"" -SkillSourceRoot ""{app}\skills"" -AgentsHintPath ""{app}\research-checkpoint-agents-extension.txt"""; Description: "Install Markplane research skills for Codex and Claude Code"; Flags: runhidden waituntilterminated
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Install-ClaudeCodeHooks.ps1"" -InstallDir ""{app}"""; Description: "Install Markplane Claude Code hooks"; Flags: runhidden waituntilterminated
@@ -50,7 +51,7 @@ Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -Fil
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Install-VSCodeExtension.ps1"" -VsixPath ""{app}\vscode-extension\markplane-vscode-0.1.2.vsix"" -ShowSummary"; Description: "Install Markplane VS Code and Antigravity IDE integration"; Flags: runhidden waituntilterminated
 
 [UninstallRun]
-Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Install-MarkplaneForAgents.ps1"" -Uninstall -InstallDir ""{app}"""; Flags: runhidden waituntilterminated; RunOnceId: "RemoveMarkplaneAgentPathIntegration"
+Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Install-MarkplaneForCodex.ps1"" -Uninstall -InstallDir ""{app}"""; Flags: runhidden waituntilterminated; RunOnceId: "RemoveMarkplaneCodexIntegration"
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Install-ClaudeCodeHooks.ps1"" -Uninstall -InstallDir ""{app}"""; Flags: runhidden waituntilterminated; RunOnceId: "RemoveMarkplaneClaudeHooks"
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Install-MarkplaneAgentSkills.ps1"" -Uninstall"; Flags: runhidden waituntilterminated; RunOnceId: "RemoveMarkplaneResearchSkills"
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Install-AntigravityIntegration.ps1"" -Uninstall -InstallDir ""{app}"""; Flags: runhidden waituntilterminated; RunOnceId: "RemoveMarkplaneAntigravityIntegration"
@@ -74,5 +75,6 @@ begin
       'to finish the integration.', mbInformation, MB_OK);
   end;
 end;
+
 
 

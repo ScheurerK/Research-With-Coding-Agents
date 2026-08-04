@@ -13,8 +13,9 @@ function Get-ScriptDirectory {
 }
 
 $scriptDirectory = Get-ScriptDirectory
+$repoRoot = Split-Path -Parent (Split-Path -Parent $scriptDirectory)
 if (-not $ExtensionSource) {
-    $ExtensionSource = Join-Path $scriptDirectory "vscode-extension"
+    $ExtensionSource = Join-Path $repoRoot "packages\vscode-extension\source"
 }
 if (-not $OutputPath) {
     $OutputPath = Join-Path $scriptDirectory "vscode-extension\markplane-vscode-0.1.2.vsix"
