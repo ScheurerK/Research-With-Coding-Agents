@@ -244,3 +244,14 @@ Verification:
 
 - `Invoke-Pester ./tests` passed: 14 passed, 0 failed.
 - `Invoke-Pester ./installer/windows/tests,./tests` passed: 100 passed, 0 failed.
+## Pester 5 CI Syntax Fix 2026-08-05
+
+Investigated the hosted `Invoke-Pester .\tests` failure from the attached log. Root cause: GitHub Actions was running Pester 5, which rejects the repository's existing Pester 3 legacy `Should` syntax. The local Windows suite uses Pester 3.4.0, so the hosted environment was exercising a different assertion parser.
+
+Fix: both GitHub Actions workflows now install/import Pester 3.4.0 before invoking tests, matching the current test suite. Because Pester 3 does not reliably fail the process by exit code on its own, the workflow calls `Invoke-Pester ... -PassThru` and exits with code 1 when `FailedCount` is greater than zero. Added repository tests that assert this CI contract remains present.
+
+Verification:
+
+- Red check observed: `Invoke-Pester .\tests` failed 13 passed / 1 failed after adding the missing workflow-contract assertions.
+- `Invoke-Pester .\tests` passed: 14 passed, 0 failed.
+- `Invoke-Pester .\installer\windows\tests,.\tests` passed: 100 passed, 0 failed.

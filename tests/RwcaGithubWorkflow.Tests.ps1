@@ -21,9 +21,17 @@ Describe "Research With Coding Agents GitHub project files" {
         $releaseWorkflow = Get-Content -Raw -LiteralPath (Join-Path $script:repoRoot ".github\workflows\windows-release.yml")
         $hygieneWorkflow = Get-Content -Raw -LiteralPath (Join-Path $script:repoRoot ".github\workflows\repo-hygiene.yml")
 
+        $releaseWorkflow | Should Match "Install-Module Pester -RequiredVersion 3\.4\.0"
+        $releaseWorkflow | Should Match "Import-Module Pester -RequiredVersion 3\.4\.0"
         $releaseWorkflow | Should Match "Invoke-Pester"
+        $releaseWorkflow | Should Match "-PassThru"
+        $releaseWorkflow | Should Match "FailedCount"
         $releaseWorkflow | Should Match "Build-RwcaRelease.ps1"
         $releaseWorkflow | Should Match "windows-latest"
+        $hygieneWorkflow | Should Match "Install-Module Pester -RequiredVersion 3\.4\.0"
+        $hygieneWorkflow | Should Match "Import-Module Pester -RequiredVersion 3\.4\.0"
+        $hygieneWorkflow | Should Match "-PassThru"
+        $hygieneWorkflow | Should Match "FailedCount"
         $hygieneWorkflow | Should Match "Test-RwcaDistributionReadiness.ps1"
         $hygieneWorkflow | Should Match "THIRD_PARTY_NOTICES.md"
     }

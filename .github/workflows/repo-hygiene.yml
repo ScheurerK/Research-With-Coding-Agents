@@ -22,4 +22,7 @@ jobs:
       - name: Run public repository tests
         shell: powershell
         run: |
-          Invoke-Pester .\tests
+          Install-Module Pester -RequiredVersion 3.4.0 -Scope CurrentUser -Force -SkipPublisherCheck
+          Import-Module Pester -RequiredVersion 3.4.0 -Force
+          $testResult = Invoke-Pester .\tests -PassThru
+          if ($testResult.FailedCount -gt 0) { exit 1 }
