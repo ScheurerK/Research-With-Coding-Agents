@@ -1,15 +1,12 @@
-$repoRoot = Split-Path -Parent $PSScriptRoot
-$releaseScript = Join-Path $repoRoot "scripts\Build-RwcaRelease.ps1"
-
 function New-RwcaReleaseFixture {
     $fixture = Join-Path $TestDrive "rwca-release-fixture"
     New-Item -ItemType Directory -Force -Path $fixture | Out-Null
 
     foreach ($file in @("README.md", "LICENSE", "THIRD_PARTY_NOTICES.md")) {
-        Copy-Item -LiteralPath (Join-Path $repoRoot $file) -Destination (Join-Path $fixture $file)
+        Copy-Item -LiteralPath (Join-Path $script:repoRoot $file) -Destination (Join-Path $fixture $file)
     }
-    Copy-Item -LiteralPath (Join-Path $repoRoot "LICENSES") -Destination (Join-Path $fixture "LICENSES") -Recurse
-    Copy-Item -LiteralPath (Join-Path $repoRoot "docs") -Destination (Join-Path $fixture "docs") -Recurse
+    Copy-Item -LiteralPath (Join-Path $script:repoRoot "LICENSES") -Destination (Join-Path $fixture "LICENSES") -Recurse
+    Copy-Item -LiteralPath (Join-Path $script:repoRoot "docs") -Destination (Join-Path $fixture "docs") -Recurse
 
     $installerOutput = Join-Path $fixture "installer\windows\Output"
     New-Item -ItemType Directory -Force -Path $installerOutput | Out-Null
@@ -19,13 +16,20 @@ function New-RwcaReleaseFixture {
 }
 
 Describe "Research With Coding Agents release artifacts" {
+    BeforeAll {
+        $script:repoRoot = (Get-Location).Path
+        if (-not (Test-Path -LiteralPath (Join-Path $script:repoRoot "README.md") -PathType Leaf)) {
+            $script:repoRoot = Split-Path -Parent $PSScriptRoot
+        }
+        $script:releaseScript = Join-Path $script:repoRoot "scripts\Build-RwcaRelease.ps1"
+    }
     It "creates installer, portable archive, checksums, and SPDX SBOM" {
-        Test-Path -LiteralPath $releaseScript -PathType Leaf | Should Be $true
+        Test-Path -LiteralPath $script:releaseScript -PathType Leaf | Should Be $true
 
         $fixture = New-RwcaReleaseFixture
         $dist = Join-Path $TestDrive "dist"
 
-        & $releaseScript -RepoRoot $fixture -DistDir $dist -SkipInstallerBuild
+        & $script:releaseScript -RepoRoot $fixture -DistDir $dist -SkipInstallerBuild
 
         $LASTEXITCODE | Should Be 0
         Test-Path -LiteralPath (Join-Path $dist "ResearchWithCodingAgentsSetup-v0.1.0.exe") -PathType Leaf | Should Be $true

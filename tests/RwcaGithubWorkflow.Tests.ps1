@@ -1,6 +1,10 @@
-$repoRoot = Split-Path -Parent $PSScriptRoot
-
 Describe "Research With Coding Agents GitHub project files" {
+    BeforeAll {
+        $script:repoRoot = (Get-Location).Path
+        if (-not (Test-Path -LiteralPath (Join-Path $script:repoRoot "README.md") -PathType Leaf)) {
+            $script:repoRoot = Split-Path -Parent $PSScriptRoot
+        }
+    }
     It "ships Windows release and repository hygiene workflows" {
         foreach ($relativePath in @(
             ".github\workflows\windows-release.yml",
@@ -9,13 +13,13 @@ Describe "Research With Coding Agents GitHub project files" {
             ".github\ISSUE_TEMPLATE\feature_request.yml",
             ".github\pull_request_template.md"
         )) {
-            Test-Path -LiteralPath (Join-Path $repoRoot $relativePath) -PathType Leaf | Should Be $true
+            Test-Path -LiteralPath (Join-Path $script:repoRoot $relativePath) -PathType Leaf | Should Be $true
         }
     }
 
     It "uses local release verification commands" {
-        $releaseWorkflow = Get-Content -Raw -LiteralPath (Join-Path $repoRoot ".github\workflows\windows-release.yml")
-        $hygieneWorkflow = Get-Content -Raw -LiteralPath (Join-Path $repoRoot ".github\workflows\repo-hygiene.yml")
+        $releaseWorkflow = Get-Content -Raw -LiteralPath (Join-Path $script:repoRoot ".github\workflows\windows-release.yml")
+        $hygieneWorkflow = Get-Content -Raw -LiteralPath (Join-Path $script:repoRoot ".github\workflows\repo-hygiene.yml")
 
         $releaseWorkflow | Should Match "Invoke-Pester"
         $releaseWorkflow | Should Match "Build-RwcaRelease.ps1"

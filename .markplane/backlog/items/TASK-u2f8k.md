@@ -232,3 +232,15 @@ Tag note: because the failing hosted `Windows Release` workflow is tag-triggered
 ## GitHub Actions Warning Cleanup 2026-08-05
 
 Updated both GitHub Actions workflows from `actions/checkout@v4` to `actions/checkout@v6` after checking the official checkout release information. This addresses the hosted runner warning that Node.js 20 action runtimes are deprecated and avoids carrying that warning into the next release run.
+## Pester 5 Root Test Fix 2026-08-05
+
+Investigated the hosted `Repository Hygiene` failure from the attached log. GitHub discovered 14 root tests but 13 failed because `$repoRoot` and related top-level variables were `null` inside `It` blocks.
+
+Root cause: hosted Pester runs discovery and execution in separate phases. Variables initialized at test-file top level are discovery-time state and are not reliably available during the run phase. The first test passed vacuously because its discovery-time array was unavailable during execution, while later tests failed when `Join-Path` received a null root.
+
+Fix: moved root-level test path initialization into `BeforeAll` and stored run-time state in `script:` variables for the five repository test files discovered by the hygiene workflow.
+
+Verification:
+
+- `Invoke-Pester ./tests` passed: 14 passed, 0 failed.
+- `Invoke-Pester ./installer/windows/tests,./tests` passed: 100 passed, 0 failed.

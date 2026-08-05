@@ -1,13 +1,17 @@
-﻿$repoRoot = Split-Path -Parent $PSScriptRoot
-$provenanceScript = Join-Path $repoRoot "scripts\Get-RwcaProvenance.ps1"
-$readinessScript = Join-Path $repoRoot "scripts\Test-RwcaDistributionReadiness.ps1"
-
 Describe "Research With Coding Agents provenance" {
+    BeforeAll {
+        $script:repoRoot = (Get-Location).Path
+        if (-not (Test-Path -LiteralPath (Join-Path $script:repoRoot "README.md") -PathType Leaf)) {
+            $script:repoRoot = Split-Path -Parent $PSScriptRoot
+        }
+        $script:provenanceScript = Join-Path $script:repoRoot "scripts\Get-RwcaProvenance.ps1"
+        $script:readinessScript = Join-Path $script:repoRoot "scripts\Test-RwcaDistributionReadiness.ps1"
+    }
     It "provides a machine-readable provenance table for shipped components" {
-        Test-Path -LiteralPath $provenanceScript -PathType Leaf | Should Be $true
-        . $provenanceScript
+        Test-Path -LiteralPath $script:provenanceScript -PathType Leaf | Should Be $true
+        . $script:provenanceScript
 
-        $items = Get-RwcaProvenance -RepoRoot $repoRoot
+        $items = Get-RwcaProvenance -RepoRoot $script:repoRoot
         $names = @($items | ForEach-Object { $_.Name })
 
         $names -contains "Markplane" | Should Be $true
@@ -17,26 +21,26 @@ Describe "Research With Coding Agents provenance" {
         foreach ($item in $items) {
             [string]::IsNullOrWhiteSpace($item.UpstreamUrl) | Should Be $false
             [string]::IsNullOrWhiteSpace($item.License) | Should Be $false
-            Test-Path -LiteralPath (Join-Path $repoRoot $item.LicenseFile) -PathType Leaf | Should Be $true
+            Test-Path -LiteralPath (Join-Path $script:repoRoot $item.LicenseFile) -PathType Leaf | Should Be $true
         }
     }
 
     It "keeps the required upstream and license declarations" {
-        . $provenanceScript
+        . $script:provenanceScript
 
-        $items = @(Get-RwcaProvenance -RepoRoot $repoRoot)
+        $items = @(Get-RwcaProvenance -RepoRoot $script:repoRoot)
         ($items | Where-Object { $_.Name -eq "Markplane" }).UpstreamUrl | Should Be "https://github.com/zerowand01/markplane"
         ($items | Where-Object { $_.Name -eq "Superpowers" }).UpstreamUrl | Should Be "https://github.com/obra/superpowers"
         ($items | Where-Object { $_.Name -eq "Superpowers" }).License | Should Be "MIT"
 
-        $superpowersLicense = Get-Content -Raw -LiteralPath (Join-Path $repoRoot "LICENSES\superpowers-MIT.txt")
+        $superpowersLicense = Get-Content -Raw -LiteralPath (Join-Path $script:repoRoot "LICENSES\superpowers-MIT.txt")
         $superpowersLicense | Should Match "Copyright \(c\) 2025 Jesse Vincent"
     }
 
     It "passes the distribution readiness script" {
-        Test-Path -LiteralPath $readinessScript -PathType Leaf | Should Be $true
+        Test-Path -LiteralPath $script:readinessScript -PathType Leaf | Should Be $true
 
-        & $readinessScript -RepoRoot $repoRoot
+        & $script:readinessScript -RepoRoot $script:repoRoot
 
         $LASTEXITCODE | Should Be 0
     }

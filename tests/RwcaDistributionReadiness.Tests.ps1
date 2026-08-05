@@ -1,7 +1,10 @@
-$repoRoot = Split-Path -Parent $PSScriptRoot
-
 Describe "Research With Coding Agents public repository envelope" {
-    $requiredFiles = @(
+    BeforeAll {
+        $script:repoRoot = (Get-Location).Path
+        if (-not (Test-Path -LiteralPath (Join-Path $script:repoRoot "README.md") -PathType Leaf)) {
+            $script:repoRoot = Split-Path -Parent $PSScriptRoot
+        }
+        $script:requiredFiles = @(
         "README.md",
         "CONTRIBUTING.md",
         "SECURITY.md",
@@ -17,16 +20,17 @@ Describe "Research With Coding Agents public repository envelope" {
         "packages\agent-adapters\README.md",
         "packages\vscode-extension\README.md",
         "extensions\README.md"
-    )
+        )
+    }
 
     It "has all public repository files" {
-        foreach ($relativePath in $requiredFiles) {
-            Test-Path -LiteralPath (Join-Path $repoRoot $relativePath) -PathType Leaf | Should Be $true
+        foreach ($relativePath in $script:requiredFiles) {
+            Test-Path -LiteralPath (Join-Path $script:repoRoot $relativePath) -PathType Leaf | Should Be $true
         }
     }
 
     It "documents the product identity and supported first install path" {
-        $readme = Get-Content -Raw -LiteralPath (Join-Path $repoRoot "README.md")
+        $readme = Get-Content -Raw -LiteralPath (Join-Path $script:repoRoot "README.md")
 
         $readme | Should Match "Research With Coding Agents"
         $readme | Should Match "ResearchWithCodingAgentsSetup-v0\.1\.0\.exe"
@@ -37,7 +41,7 @@ Describe "Research With Coding Agents public repository envelope" {
     }
 
     It "does not present the complete product as Markplane" {
-        $readme = Get-Content -Raw -LiteralPath (Join-Path $repoRoot "README.md")
+        $readme = Get-Content -Raw -LiteralPath (Join-Path $script:repoRoot "README.md")
 
         $readme | Should Not Match "^# Markplane"
         $readme | Should Match "Markplane is a core component"
@@ -51,12 +55,12 @@ Describe "Research With Coding Agents public repository envelope" {
             "packages\agent-adapters\hooks\Invoke-MarkplaneAntigravityHook.ps1",
             "installer\windows\MarkplaneInstaller.iss"
         )) {
-            Test-Path -LiteralPath (Join-Path $repoRoot $relativePath) -PathType Leaf | Should Be $true
+            Test-Path -LiteralPath (Join-Path $script:repoRoot $relativePath) -PathType Leaf | Should Be $true
         }
 
-        Test-Path -LiteralPath (Join-Path $repoRoot "markplane-master") -PathType Container | Should Be $false
-        Test-Path -LiteralPath (Join-Path $repoRoot "MarkplaneInstaller") -PathType Container | Should Be $false
-        Test-Path -LiteralPath (Join-Path $repoRoot "Skills") -PathType Container | Should Be $false
+        Test-Path -LiteralPath (Join-Path $script:repoRoot "markplane-master") -PathType Container | Should Be $false
+        Test-Path -LiteralPath (Join-Path $script:repoRoot "MarkplaneInstaller") -PathType Container | Should Be $false
+        Test-Path -LiteralPath (Join-Path $script:repoRoot "Skills") -PathType Container | Should Be $false
     }
 
     It "does not contain local workspace metadata or component build artifacts" {
@@ -70,14 +74,14 @@ Describe "Research With Coding Agents public repository envelope" {
             "components\markplane\target",
             "installer\windows\Output"
         )) {
-            Test-Path -LiteralPath (Join-Path $repoRoot $relativePath) | Should Be $false
+            Test-Path -LiteralPath (Join-Path $script:repoRoot $relativePath) | Should Be $false
         }
     }
 
     It "does not contain local absolute machine paths in public files" {
         $publicRoots = @("README.md", "CONTRIBUTING.md", "SECURITY.md", "UPSTREAM.md", "THIRD_PARTY_NOTICES.md", "docs", "packages", "installer", "tests", "scripts")
         $files = foreach ($relativePath in $publicRoots) {
-            $path = Join-Path $repoRoot $relativePath
+            $path = Join-Path $script:repoRoot $relativePath
             if (Test-Path -LiteralPath $path -PathType Leaf) {
                 Get-Item -LiteralPath $path
             } elseif (Test-Path -LiteralPath $path -PathType Container) {
