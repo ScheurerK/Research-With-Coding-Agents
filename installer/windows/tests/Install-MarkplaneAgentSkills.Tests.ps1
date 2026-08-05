@@ -59,7 +59,7 @@ Describe "Agent skill installer" {
             @([regex]::Matches($codexContent, "At the start of every main-agent turn")).Count | Should Be 1
             @([regex]::Matches($claudeContent, "At the start of every main-agent turn")).Count | Should Be 1
 
-            & $healthCheck -CodexRoot (Join-Path $profile ".codex") -ClaudeRoot (Join-Path $profile ".claude")
+            & $healthCheck -CodexRoot (Join-Path $profile ".codex") -ClaudeRoot (Join-Path $profile ".claude") -SkipTelemetry
             $LASTEXITCODE | Should Be 0
         } finally {
             $env:USERPROFILE = $oldUserProfile

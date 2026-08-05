@@ -16,7 +16,18 @@ function Invoke-AntigravityHookProcess {
         "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $adapter,
         "-Event", $Event, "-MarkplaneExe", $MarkplaneExe, "-StateRoot", $StateRoot
     )
-    $stdout = $InputJson | & powershell.exe @arguments 2> $stderrPath
+    # Windows PowerShell 5.1 wraps a native command's stderr lines in NativeCommandError
+    # records; under $ErrorActionPreference = "Stop" (GitHub Actions' default for
+    # `shell: powershell` steps) that turns even expected diagnostic stderr output into a
+    # terminating exception instead of plain text in $stderrPath. Relax it for the native
+    # call only, matching the same pattern used in Install-VSCodeExtension.ps1.
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $stdout = $InputJson | & powershell.exe @arguments 2> $stderrPath
+    } finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
     $exitCode = $LASTEXITCODE
     $stderr = if (Test-Path -LiteralPath $stderrPath -PathType Leaf) {
         Get-Content -Raw -LiteralPath $stderrPath
