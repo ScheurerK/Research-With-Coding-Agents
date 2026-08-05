@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/brand/rwca-logo.png" alt="Research With Coding Agents logo" width="560">
+</p>
+
 # Research With Coding Agents
 
 Research With Coding Agents is a Windows-first local research workflow package for coding agents. It bundles a tested Markplane task system, a project-maintained Superpowers distribution, research skills, agent hooks, and the Markplane UI integration for VS Code and Antigravity.

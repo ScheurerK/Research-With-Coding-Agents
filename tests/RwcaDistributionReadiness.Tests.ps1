@@ -19,7 +19,11 @@ Describe "Research With Coding Agents public repository envelope" {
         "packages\project-skills\README.md",
         "packages\agent-adapters\README.md",
         "packages\vscode-extension\README.md",
-        "extensions\README.md"
+        "extensions\README.md",
+        "assets\brand\README.md",
+        "assets\brand\rwca-logo.png",
+        "assets\brand\rwca-logo-transparent.png",
+        "assets\brand\rwca-icon.png"
         )
     }
 
@@ -33,6 +37,7 @@ Describe "Research With Coding Agents public repository envelope" {
         $readme = Get-Content -Raw -LiteralPath (Join-Path $script:repoRoot "README.md")
 
         $readme | Should Match "Research With Coding Agents"
+        $readme | Should Match "assets/brand/rwca-logo\.png"
         $readme | Should Match "ResearchWithCodingAgentsSetup-v0\.1\.0\.exe"
         $readme | Should Match "git clone https://github.com/<owner>/research-with-coding-agents.git"
         $readme | Should Match "Windows"
