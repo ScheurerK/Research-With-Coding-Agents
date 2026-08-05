@@ -31,11 +31,6 @@ jobs:
           npm run build
           Pop-Location
 
-      - name: Cache Rust build
-        uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: components/markplane -> target
-
       - name: Build markplane.exe from vendored source
         shell: powershell
         run: |
@@ -47,6 +42,8 @@ jobs:
           Pop-Location
           Copy-Item -LiteralPath "components\markplane\target\release\markplane.exe" -Destination "installer\windows\markplane.exe" -Force
           Write-Host "Built markplane.exe with embedded web UI from components\markplane"
+          Remove-Item -LiteralPath "components\markplane\target" -Recurse -Force
+          Write-Host "Removed components\markplane\target (forbidden generated path per distribution-readiness checks)"
 
       - name: Run PowerShell tests
         shell: powershell
