@@ -32,6 +32,8 @@ Describe "Research With Coding Agents provenance" {
         ($items | Where-Object { $_.Name -eq "Markplane" }).UpstreamUrl | Should Be "https://github.com/zerowand01/markplane"
         ($items | Where-Object { $_.Name -eq "Superpowers" }).UpstreamUrl | Should Be "https://github.com/obra/superpowers"
         ($items | Where-Object { $_.Name -eq "Superpowers" }).License | Should Be "MIT"
+        ($items | Where-Object { $_.Name -eq "Markplane" }).PinnedCommit | Should Match "Vendored source snapshot"
+        ($items | Where-Object { $_.Name -eq "Superpowers" }).PinnedCommit | Should Match "Vendored source snapshot"
 
         $superpowersLicense = Get-Content -Raw -LiteralPath (Join-Path $script:repoRoot "LICENSES\superpowers-MIT.txt")
         $superpowersLicense | Should Match "Copyright \(c\) 2025 Jesse Vincent"

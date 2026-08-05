@@ -26,14 +26,14 @@ updated: 2026-08-04
 
 Restructure the current local package into the public **Research With Coding
 Agents** GitHub product. Preserve Markplane and Superpowers as separately licensed,
-officially linked forks pinned by the main repository, and provide a unified,
+vendored maintained source snapshots linked to their upstream projects, and provide a unified,
 reproducible Windows distribution that supports users from direct installation
 through unrestricted source and extension development.
 
 ## Acceptance Criteria
 
-- [ ] The main GitHub repository is named Research With Coding Agents and pins the
-  maintained Markplane and Superpowers forks as submodules.
+- [x] The main GitHub repository is named Research With Coding Agents and documents
+  maintained Markplane and Superpowers source trees as vendored snapshots with upstream provenance.
 - [ ] One tested Windows setup executable installs, repairs, updates, verifies, and
   uninstalls the required core plus optional agent and IDE integrations.
 - [x] The bundled customized Superpowers revision is authoritative for Codex,
@@ -75,7 +75,7 @@ Verification:
 
 Remaining before closing this task:
 
-- Repair or initialize the invalid root `.git`, then create/pin the real GitHub fork submodules.
+- Repair or initialize the invalid root `.git`, then settle and document the component provenance model.
 - Run a true clean-profile install/repair/update/uninstall smoke test against the generated setup executable.
 - Push to GitHub and let the workflows run on the real repository.
 ## Git Publication Progress 2026-08-04
@@ -95,7 +95,7 @@ Restructured the repository so GitHub users see the intended source layout direc
 - moved agent hooks and MCP templates to `packages/agent-adapters/`;
 - moved packaged project skill source to `packages/project-skills/`;
 - updated README, CONTRIBUTING, upstream/provenance docs, workflows, release scripts, tests, and specs for the new layout;
-- removed current submodule checkout assumptions from CI/docs until public fork remotes are attached.
+- removed submodule checkout assumptions from CI/docs so normal clones include the full source tree.
 
 Verification after restructure:
 
@@ -134,7 +134,7 @@ Blocking before public release:
 - Worktree is dirty: `.markplane/backlog/items/TASK-u2f8k.md` has uncommitted tracking updates.
 - `.agents/mcp_config.json` is tracked and contains local absolute paths under `<repo-root>\...`, including the old `MarkplaneInstaller` path. This must not ship as public repo config.
 - `components/markplane/.markplane/` and `components/markplane/.claude/` are tracked from the embedded upstream source tree. Decide whether to keep them intentionally as upstream project metadata or remove them from the product source snapshot before public release.
-- The acceptance criterion for real public fork/submodule pinning is still unresolved: current docs say source snapshot until public fork remote is attached.
+- The component provenance model was still undecided during this audit; it was later settled as vendored source snapshots for the first public release.
 - A true clean-profile install/repair/update/uninstall smoke test against the generated setup executable is still outstanding.
 
 Non-blocking cleanup:
@@ -271,7 +271,8 @@ Verification:
 - Red check observed: `Invoke-Pester .\tests\RwcaGithubWorkflow.Tests.ps1` failed before `.github/dependabot.yml` existed.
 - `npm ci` passed and reported 0 vulnerabilities.
 - `npm audit --audit-level=low` passed and reported 0 vulnerabilities.
-- `npm run lint` passed.\n- `npm run build` passed with Next.js 16.3.0; only the pre-existing export/rewrites warnings remain.
+- `npm run lint` passed.
+- `npm run build` passed with Next.js 16.3.0; only the pre-existing export/rewrites warnings remain.
 - `Invoke-Pester .\tests` passed: 15 passed, 0 failed.
 - `Invoke-Pester .\installer\windows\tests,.\tests` passed: 101 passed, 0 failed.
 
@@ -285,3 +286,15 @@ After pushing the Dependabot baseline commit, GitHub created Dependabot PR branc
 - npm: grouped Markplane UI minor/patch update plus separate major-style updates for `eslint 10.8.0`, `fractional-indexing 4.0.0`, `@types/node 26.1.2`, and `typescript 7.0.2`.
 
 Decision: do not merge all Dependabot PRs blindly. Treat grouped minor/patch PRs as first candidates after their CI passes. Keep major-style PRs separate for compatibility review. Discarded the local uncommitted exploratory `Cargo.lock` refresh so Cargo changes remain represented by Dependabot PRs instead of being mixed into `main`.
+
+## Blogpost Claim Review 2026-08-05
+
+Reviewed the attached draft blogpost against the current public repo docs and tracking state. Main publication-facing corrections: describe the package as Research With Coding Agents rather than still unnamed; keep macOS/Linux framed as experimental source/basic Markplane support rather than generally available; avoid implying the Windows installer has completed a clean-profile install/repair/update/uninstall smoke test; clarify that Markplane creates persistent project state, not a temporary structure; and state that bundled Markplane/Superpowers copies are modified, licensed third-party vendored source snapshots without upstream endorsement.
+
+## Fork/Submodule Clarification 2026-08-05
+
+Confirmed that the GitHub upload published the main Research With Coding Agents repository, but no Git submodules are configured (`git submodule status` is empty). Option A was selected: Markplane and Superpowers remain shipped as vendored source snapshots under `components/`, with upstream provenance documented instead of requiring submodule checkout.
+
+## Vendored Snapshot Decision 2026-08-05
+
+Implemented Option A as the public component model. The root README, CONTRIBUTING guide, component README, upstream policy, third-party notices, and provenance test now describe Markplane and Superpowers as vendored maintained source snapshots. Submodules are no longer a required acceptance criterion for the first public release; any future conversion must update installer, CI, release packaging, and contributor docs in the same change.
