@@ -298,3 +298,7 @@ Confirmed that the GitHub upload published the main Research With Coding Agents 
 ## Vendored Snapshot Decision 2026-08-05
 
 Implemented Option A as the public component model. The root README, CONTRIBUTING guide, component README, upstream policy, third-party notices, and provenance test now describe Markplane and Superpowers as vendored maintained source snapshots. Submodules are no longer a required acceptance criterion for the first public release; any future conversion must update installer, CI, release packaging, and contributor docs in the same change.
+
+## Dependabot Batch Resolution 2026-08-05
+
+Created a local Dependabot batch branch and merged the compatible updates: GitHub Actions `checkout@v7` and `upload-artifact@v7`, Cargo Markplane Rust minor/patch plus `tabled 0.21` and `tower-http 0.7`, npm Markplane UI minor/patch, `fractional-indexing 4`, and `@types/node 26`. Tested npm major PRs for `typescript 7` and `eslint 10`; both are incompatible with the current Next/eslint-config-next/typescript-eslint toolchain, so they were excluded and future semver-major Dependabot PRs for those packages were ignored.
