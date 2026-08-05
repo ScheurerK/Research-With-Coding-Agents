@@ -229,3 +229,6 @@ Verification:
 - `Invoke-Pester ./installer/windows/tests,./tests` passed: 100 passed, 0 failed.
 
 Tag note: because the failing hosted `Windows Release` workflow is tag-triggered, publishing this fix for the already pushed `v0.1.0` release requires either moving the `v0.1.0` tag to the fix commit with explicit approval, or creating a later release tag.
+## GitHub Actions Warning Cleanup 2026-08-05
+
+Updated both GitHub Actions workflows from `actions/checkout@v4` to `actions/checkout@v6` after checking the official checkout release information. This addresses the hosted runner warning that Node.js 20 action runtimes are deprecated and avoids carrying that warning into the next release run.
