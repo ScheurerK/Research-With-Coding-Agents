@@ -302,3 +302,7 @@ Implemented Option A as the public component model. The root README, CONTRIBUTIN
 ## Dependabot Batch Resolution 2026-08-05
 
 Created a local Dependabot batch branch and merged the compatible updates: GitHub Actions `checkout@v7` and `upload-artifact@v7`, Cargo Markplane Rust minor/patch plus `tabled 0.21` and `tower-http 0.7`, npm Markplane UI minor/patch, `fractional-indexing 4`, and `@types/node 26`. Tested npm major PRs for `typescript 7` and `eslint 10`; both are incompatible with the current Next/eslint-config-next/typescript-eslint toolchain, so they were excluded and future semver-major Dependabot PRs for those packages were ignored.
+
+## Dependabot Batch Push 2026-08-05
+
+Merged the tested `rwca/dependabot-batch` branch into `main` and pushed `65694fc` to GitHub. Eight Dependabot branch heads are now ancestors of `main`: GitHub Actions checkout/upload-artifact, Cargo minor/patch plus tabled/tower-http, npm UI minor/patch, fractional-indexing, and @types/node. The ESLint 10 and TypeScript 7 branches remain intentionally unmerged because local verification showed incompatibilities with the current Next/eslint-config-next/typescript-eslint stack.
