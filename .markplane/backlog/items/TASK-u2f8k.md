@@ -276,3 +276,12 @@ Verification:
 - `Invoke-Pester .\installer\windows\tests,.\tests` passed: 101 passed, 0 failed.
 
 Cargo note: local `cargo audit` is not installed on this machine, so Rust advisory status is delegated to GitHub Dependabot and the new Cargo update configuration until a Rust audit tool is added locally or in CI.
+## Dependabot PR Triage 2026-08-05
+
+After pushing the Dependabot baseline commit, GitHub created Dependabot PR branches for active manifests:
+
+- Cargo: grouped Markplane Rust minor/patch lockfile update plus separate `tabled 0.21.0` and `tower-http 0.7.0` major-style updates.
+- GitHub Actions: `actions/checkout 7` and `actions/upload-artifact 7`.
+- npm: grouped Markplane UI minor/patch update plus separate major-style updates for `eslint 10.8.0`, `fractional-indexing 4.0.0`, `@types/node 26.1.2`, and `typescript 7.0.2`.
+
+Decision: do not merge all Dependabot PRs blindly. Treat grouped minor/patch PRs as first candidates after their CI passes. Keep major-style PRs separate for compatibility review. Discarded the local uncommitted exploratory `Cargo.lock` refresh so Cargo changes remain represented by Dependabot PRs instead of being mixed into `main`.
