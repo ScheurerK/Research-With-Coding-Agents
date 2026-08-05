@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSummary } from "@/lib/hooks/use-summary";
 import { StatusBadge } from "@/components/domain/status-badge";
@@ -34,18 +34,10 @@ export function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(
-    () => searchParams.get("task")
-  );
-
-  // Sync selectedTaskId when URL changes (e.g. WikiLinkChip navigation)
-  useEffect(() => {
-    setSelectedTaskId(searchParams.get("task"));
-  }, [searchParams]);
+  const selectedTaskId = searchParams.get("task");
 
   const openTask = useCallback(
     (id: string) => {
-      setSelectedTaskId(id);
       const params = new URLSearchParams(searchParams.toString());
       params.set("task", id);
       router.replace(`?${params.toString()}`, { scroll: false });
@@ -54,7 +46,6 @@ export function DashboardContent() {
   );
 
   const closeTask = useCallback(() => {
-    setSelectedTaskId(null);
     const params = new URLSearchParams(searchParams.toString());
     params.delete("task");
     const qs = params.toString();

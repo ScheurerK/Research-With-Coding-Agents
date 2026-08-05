@@ -255,3 +255,24 @@ Verification:
 - Red check observed: `Invoke-Pester .\tests` failed 13 passed / 1 failed after adding the missing workflow-contract assertions.
 - `Invoke-Pester .\tests` passed: 14 passed, 0 failed.
 - `Invoke-Pester .\installer\windows\tests,.\tests` passed: 100 passed, 0 failed.
+## Dependabot Security Hygiene 2026-08-05
+
+Investigated the GitHub push warning that reported 87 Dependabot vulnerabilities on the default branch. Local npm audit identified the active npm security surface in `components/markplane/crates/markplane-web/ui`: 17 vulnerability groups before remediation, including 11 high severity groups, mostly transitive Markplane Web UI dependencies around Next.js/PostCSS/sharp/Hono/glob tooling.
+
+Fixes:
+
+- Added `.github/dependabot.yml` for weekly grouped updates across the active npm, Cargo, and GitHub Actions dependency manifests.
+- Refreshed the Markplane Web UI npm lockfile with current semver-compatible dependency releases.
+- Raised the direct Next.js runtime declaration to `next` `^16.3.0`; kept `eslint-config-next` on the prior version to avoid introducing unrelated React Compiler lint-rule churn.
+- Replaced `next/font/google` in the Markplane Web UI layout with the already bundled local `geist` package so production builds do not need to fetch Google Fonts.
+
+Verification:
+
+- Red check observed: `Invoke-Pester .\tests\RwcaGithubWorkflow.Tests.ps1` failed before `.github/dependabot.yml` existed.
+- `npm ci` passed and reported 0 vulnerabilities.
+- `npm audit --audit-level=low` passed and reported 0 vulnerabilities.
+- `npm run lint` passed.\n- `npm run build` passed with Next.js 16.3.0; only the pre-existing export/rewrites warnings remain.
+- `Invoke-Pester .\tests` passed: 15 passed, 0 failed.
+- `Invoke-Pester .\installer\windows\tests,.\tests` passed: 101 passed, 0 failed.
+
+Cargo note: local `cargo audit` is not installed on this machine, so Rust advisory status is delegated to GitHub Dependabot and the new Cargo update configuration until a Rust audit tool is added locally or in CI.

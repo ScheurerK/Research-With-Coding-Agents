@@ -9,6 +9,7 @@ Describe "Research With Coding Agents GitHub project files" {
         foreach ($relativePath in @(
             ".github\workflows\windows-release.yml",
             ".github\workflows\repo-hygiene.yml",
+            ".github\dependabot.yml",
             ".github\ISSUE_TEMPLATE\bug_report.yml",
             ".github\ISSUE_TEMPLATE\feature_request.yml",
             ".github\pull_request_template.md"
@@ -34,5 +35,20 @@ Describe "Research With Coding Agents GitHub project files" {
         $hygieneWorkflow | Should Match "FailedCount"
         $hygieneWorkflow | Should Match "Test-RwcaDistributionReadiness.ps1"
         $hygieneWorkflow | Should Match "THIRD_PARTY_NOTICES.md"
+    }
+
+    It "configures Dependabot for active dependency manifests" {
+        $dependabotPath = Join-Path $script:repoRoot ".github\dependabot.yml"
+        Test-Path -LiteralPath $dependabotPath -PathType Leaf | Should Be $true
+
+        $dependabot = Get-Content -Raw -LiteralPath $dependabotPath
+        $dependabot | Should Match "version:\s+2"
+        $dependabot | Should Match 'package-ecosystem:\s+"npm"'
+        $dependabot | Should Match 'directory:\s+"/components/markplane/crates/markplane-web/ui"'
+        $dependabot | Should Match 'package-ecosystem:\s+"cargo"'
+        $dependabot | Should Match 'directory:\s+"/components/markplane"'
+        $dependabot | Should Match 'package-ecosystem:\s+"github-actions"'
+        $dependabot | Should Match 'directory:\s+"/"'
+        $dependabot | Should Match "security-updates"
     }
 }

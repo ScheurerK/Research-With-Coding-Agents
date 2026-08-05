@@ -1,0 +1,64 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/components/markplane/crates/markplane-web/ui"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:00"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 5
+    groups:
+      markplane-ui-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+      markplane-ui-minor-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+        patterns:
+          - "*"
+
+  - package-ecosystem: "cargo"
+    directory: "/components/markplane"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:15"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 5
+    groups:
+      markplane-rust-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+      markplane-rust-minor-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+        patterns:
+          - "*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "08:30"
+      timezone: "Europe/Berlin"
+    open-pull-requests-limit: 3
+    groups:
+      actions-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
+      actions-minor-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+        patterns:
+          - "*"

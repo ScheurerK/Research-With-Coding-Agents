@@ -21,9 +21,6 @@ export function InlineEdit({
   const [draft, setDraft] = useState(value);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    setDraft(value);
-  }, [value]);
 
   useEffect(() => {
     if (isEditing) {
@@ -68,7 +65,7 @@ export function InlineEdit({
   return (
     <button
       type="button"
-      onClick={() => setIsEditing(true)}
+      onClick={() => { setDraft(value); setIsEditing(true); }}
       className={`text-left cursor-pointer hover:opacity-80 transition-opacity ${className ?? ""}`}
     >
       {value || placeholder}

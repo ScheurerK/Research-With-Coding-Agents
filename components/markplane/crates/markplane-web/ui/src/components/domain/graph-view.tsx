@@ -877,7 +877,10 @@ function GraphCanvas({
 }) {
   const { fitView, setCenter } = useReactFlow();
   const nodesRef = useRef(nodes);
-  nodesRef.current = nodes;
+
+  useEffect(() => {
+    nodesRef.current = nodes;
+  }, [nodes]);
 
   useEffect(() => {
     if (layoutTrigger === 0) return;
