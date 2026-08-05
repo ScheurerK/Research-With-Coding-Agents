@@ -205,3 +205,27 @@ Release artifact hashes in `dist/`:
 - `SBOM.spdx.json`: `F86A2EA7207D4632403594BDA9A02C3BB0BC4A00F31DE5D8C6CB44A7F9315EBF`
 
 Remaining external publication steps: push the final local commit/tag to the configured GitHub remote, let CI run there, attach/upload the `dist/` release artifacts, and perform a true clean-profile setup/repair/update/uninstall smoke test on the published installer.
+## GitHub Push 2026-08-05
+
+Published the prepared local release state to GitHub after explicit user approval:
+
+- pushed `main` to `https://github.com/ScheurerK/Research-With-Coding-Agents.git`;
+- pushed `v0.1.0` as a new remote tag;
+- verified `refs/heads/main` and `refs/tags/v0.1.0` both resolve to `4195977b2cdb44ac024ccbb905a697561cb66180`.
+
+Remaining external publication steps: wait for GitHub Actions/CI on the hosted repository, attach the `dist/` artifacts to the GitHub release if desired, and run a true clean-profile installer smoke test from the published download.
+## GitHub CI Fix 2026-08-05
+
+Investigated the first hosted GitHub Actions failures after publication. `gh` was not available locally, and the unauthenticated GitHub API returned 404 for the private/new repository, so diagnosis used the screenshot plus local workflow/test inspection.
+
+Root cause: installer tests derived `$root` through `$MyInvocation.MyCommand.Path`, while the root-level tests already used `$PSScriptRoot`. The GitHub/Pester execution context caused the installer tests to resolve the wrong root, so basic shipped-file checks such as `Install-ClaudeCodeHooks.ps1` and the Antigravity installer files failed immediately.
+
+Fix: changed all installer test root calculations to `$root = Split-Path -Parent $PSScriptRoot`, matching the robust pattern used by the repository-level tests.
+
+Verification:
+
+- `rg -n "MyInvocation\.MyCommand\.Path" installer/windows/tests tests -g "*.ps1"` found no remaining installer/root test usages.
+- `Invoke-Pester ./installer/windows/tests/Install-ClaudeCodeHooks.Tests.ps1,./installer/windows/tests/Install-AntigravityIntegration.Tests.ps1` passed: 13 passed, 0 failed.
+- `Invoke-Pester ./installer/windows/tests,./tests` passed: 100 passed, 0 failed.
+
+Tag note: because the failing hosted `Windows Release` workflow is tag-triggered, publishing this fix for the already pushed `v0.1.0` release requires either moving the `v0.1.0` tag to the fix commit with explicit approval, or creating a later release tag.

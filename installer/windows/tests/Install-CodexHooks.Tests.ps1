@@ -1,4 +1,4 @@
-$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$root = Split-Path -Parent $PSScriptRoot
 $repoRoot = Split-Path -Parent (Split-Path -Parent $root)
 $installer = Join-Path $root "Install-CodexHooks.ps1"
 $adapter = Join-Path $repoRoot "packages\agent-adapters\hooks\Invoke-MarkplaneCodexHook.ps1"

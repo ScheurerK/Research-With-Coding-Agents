@@ -1,4 +1,4 @@
-$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$root = Split-Path -Parent $PSScriptRoot
 $repoRoot = Split-Path -Parent (Split-Path -Parent $root)
 $skills = Join-Path $repoRoot "components\superpowers\skills"
 

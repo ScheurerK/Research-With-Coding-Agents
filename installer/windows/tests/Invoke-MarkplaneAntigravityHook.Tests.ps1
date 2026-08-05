@@ -1,4 +1,4 @@
-$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$root = Split-Path -Parent $PSScriptRoot
 $repoRoot = Split-Path -Parent (Split-Path -Parent $root)
 $adapter = Join-Path $repoRoot "packages\agent-adapters\hooks\Invoke-MarkplaneAntigravityHook.ps1"
 $markplane = Join-Path $root "markplane.exe"

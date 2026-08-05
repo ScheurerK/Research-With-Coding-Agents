@@ -1,4 +1,4 @@
-$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$root = Split-Path -Parent $PSScriptRoot
 $repoRoot = Split-Path -Parent (Split-Path -Parent $root)
 $installer = Join-Path $root "Install-AntigravityIntegration.ps1"
 $workspaceInstaller = Join-Path $root "Install-AntigravityWorkspace.ps1"

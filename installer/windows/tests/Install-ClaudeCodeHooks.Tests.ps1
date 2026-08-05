@@ -1,4 +1,4 @@
-$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$root = Split-Path -Parent $PSScriptRoot
 $installer = Join-Path $root "Install-ClaudeCodeHooks.ps1"
 
 Describe "Claude hook installer" {
