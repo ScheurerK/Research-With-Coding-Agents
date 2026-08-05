@@ -15,35 +15,38 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Fetch prebuilt markplane.exe
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: components/markplane/crates/markplane-web/ui/package-lock.json
+
+      - name: Build Markplane web UI
         shell: powershell
-        env:
-          MARKPLANE_VERSION: v0.1.2
         run: |
           $ErrorActionPreference = "Stop"
-          $zipName = "markplane-$env:MARKPLANE_VERSION-x86_64-pc-windows-msvc.zip"
-          $baseUrl = "https://github.com/zerowand01/markplane/releases/download/$env:MARKPLANE_VERSION"
-          $work = Join-Path $env:RUNNER_TEMP "markplane-fetch"
-          New-Item -ItemType Directory -Force -Path $work | Out-Null
-          $zipPath = Join-Path $work $zipName
-          $checksumsPath = Join-Path $work "checksums-sha256.txt"
+          Push-Location components\markplane\crates\markplane-web\ui
+          npm ci
+          npm run build
+          Pop-Location
 
-          Invoke-WebRequest -Uri "$baseUrl/$zipName" -OutFile $zipPath -UseBasicParsing
-          Invoke-WebRequest -Uri "$baseUrl/checksums-sha256.txt" -OutFile $checksumsPath -UseBasicParsing
+      - name: Cache Rust build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: components/markplane -> target
 
-          $expectedLine = Get-Content $checksumsPath | Where-Object { $_ -match [regex]::Escape($zipName) }
-          if (-not $expectedLine) {
-            throw "No checksum entry found for $zipName"
-          }
-          $expectedHash = ($expectedLine -split '\s+')[0]
-          $actualHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $zipPath).Hash
-          if ($actualHash -ine $expectedHash) {
-            throw "Checksum mismatch for $zipName. Expected $expectedHash, got $actualHash."
-          }
-
-          Expand-Archive -LiteralPath $zipPath -DestinationPath $work -Force
-          Copy-Item -LiteralPath (Join-Path $work "markplane.exe") -Destination "installer\windows\markplane.exe" -Force
-          Write-Host "Fetched and verified markplane.exe $env:MARKPLANE_VERSION"
+      - name: Build markplane.exe from vendored source
+        shell: powershell
+        run: |
+          $ErrorActionPreference = "Stop"
+          rustup update stable
+          rustup default stable
+          Push-Location components\markplane
+          cargo build --release --features embed-ui -p markplane-cli
+          Pop-Location
+          Copy-Item -LiteralPath "components\markplane\target\release\markplane.exe" -Destination "installer\windows\markplane.exe" -Force
+          Write-Host "Built markplane.exe with embedded web UI from components\markplane"
 
       - name: Run PowerShell tests
         shell: powershell

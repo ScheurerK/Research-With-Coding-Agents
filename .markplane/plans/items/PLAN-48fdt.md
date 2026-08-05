@@ -41,6 +41,17 @@ The approved design is:
 - `MarkplaneInstaller/vscode-extension/package.json` - extension ID and version `local.markplane-vscode@0.1.2`.
 - `MarkplaneInstaller/MarkplaneInstaller.iss` and `MarkplaneInstaller/MarkplaneAgentInstaller.iss` - package payload and lifecycle calls.
 
+## Approach
+
+Land the four phases independently, each verified by its own focused Pester
+tests before moving to the next: first make the plugin skill tree
+authoritative and recursively hash-verified, then migrate hook handlers to
+the current Antigravity 2.5 direct-handler schema, then replace all
+extension-folder-copy installation with build-time VSIX packaging installed
+through the official `code`/`antigravity-ide` CLIs, and finally run the full
+regression suite plus a real (non-mocked) install to prove the built
+artifacts, not just the installer scripts, behave correctly.
+
 ## Key Decisions
 
 | Decision | Rationale |

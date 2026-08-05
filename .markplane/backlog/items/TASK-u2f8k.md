@@ -6,7 +6,7 @@ priority: high
 type: feature
 effort: large
 epic: null
-plan: null
+plan: PLAN-bxt28
 depends_on: []
 blocks: []
 related: []
@@ -17,7 +17,7 @@ tags:
 - licensing
 position: aU
 created: 2026-08-04
-updated: 2026-08-04
+updated: 2026-08-05
 ---
 
 # Publish Research With Coding Agents repository
@@ -310,3 +310,61 @@ Merged the tested `rwca/dependabot-batch` branch into `main` and pushed `65694fc
 ## Brand Logo Assets 2026-08-05
 
 Added the project-owner-provided Research With Coding Agents logo as repository brand assets under `assets/brand/`: primary README logo, transparent line-art variant, and square icon. README now displays the primary logo and distribution-readiness tests assert that the referenced brand files exist.
+
+## GitHub Release Publish Enablement 2026-08-05
+
+User noticed a `v0.1.0` tag existed on GitHub but no Release with the installer `.exe` was attached. Root cause: `windows-release.yml` only uploaded `dist\` as a transient Actions artifact via `actions/upload-artifact`; no step ever created a GitHub Release or attached assets to it, despite `README.md` explicitly telling users to "Download `ResearchWithCodingAgentsSetup-v0.1.0.exe` from a release."
+
+Fix (commit `e59ca92`, pushed to `main`): added `contents: write` job permission and a `softprops/action-gh-release@v2` step guarded to `v*` tag pushes that attaches all of `dist/*` (setup exe, portable zip, SBOM, checksums) with auto-generated release notes.
+
+Moved the `v0.1.0` tag to `e59ca92` and force-pushed it to re-trigger the workflow on the fixed definition. The hosted run then failed at the pre-existing test step (98 passed, 3 failed), so the release step never executed.
+
+## GitHub Actions Release Test Fix 2026-08-05
+
+Investigated the 3 test failures from the hosted `Windows Release` run using the attached CI log. Reproduced and verified each root cause locally on Windows PowerShell 5.1 (Pester 3.4.0) before changing anything:
+
+- `installer\windows\markplane.exe` is a prebuilt binary intentionally excluded from git (matches this repo's own "no committed build artifacts" governance test) and was never provisioned in CI, so the two Antigravity hook contract tests that shell out to it failed with "The system cannot find the file specified." Fix: added a `windows-release.yml` step that downloads the official `zerowand01/markplane` `v0.1.2` Windows release zip, verifies its SHA256 against the published `checksums-sha256.txt`, and extracts `markplane.exe` into `installer\windows\` before tests and the installer build run.
+- `Invoke-MarkplaneAntigravityHook.Tests.ps1`'s test helper redirected the native `powershell.exe` subprocess's stderr with `2> $stderrPath`. Confirmed by direct reproduction: Windows PowerShell 5.1 wraps native stderr lines in `NativeCommandError` records, and under `$ErrorActionPreference = "Stop"` (GitHub Actions' default for `shell: powershell` steps, also reproduced directly) that turns even expected diagnostic stderr output into a terminating exception instead of plain text in the redirect file. Fix: wrap the native call with `$ErrorActionPreference = "Continue"` / restore, matching the existing pattern already used in `Install-VSCodeExtension.ps1`.
+- `Install-MarkplaneAgentSkills.Tests.ps1`'s idempotency test passed `-SkipTelemetry` to the installer call (to avoid touching the real `HKCU` registry during tests) but not to the following health-check call, so the health check's telemetry-env-var assertion only passed on machines that already had `SUPERPOWERS_DISABLE_TELEMETRY=1` set globally (true on the dev machine per its own global Claude Code instructions, false on a clean CI runner). Fix: pass `-SkipTelemetry` to the health check too, matching the installer call's scope.
+
+Verification:
+
+- Reproduced all three failures standalone before fixing (missing-exe exception, EAP=Stop turning expected stderr into a terminating RemoteException, and the telemetry env-var assertion depending on ambient machine state).
+- Downloaded and SHA256-verified the real `markplane-v0.1.2-x86_64-pc-windows-msvc.zip` and ran the two Antigravity hook scenarios against it standalone with the EAP fix applied: all assertions passed.
+- `Invoke-Pester .\installer\windows\tests,.\tests` passed: 101 passed, 0 failed (default `$ErrorActionPreference`).
+- Re-ran the same full suite under `$ErrorActionPreference = "Stop"` (mirroring GitHub Actions' PowerShell step default) to validate against the exact failure mode observed in CI: 101 passed, 0 failed.
+
+Committed as `900d90a` on `main`, then moved `v0.1.0` to `900d90a` and force-pushed the tag to re-trigger the hosted `Windows Release` workflow with the fixes.
+
+Remaining: confirm the hosted run now passes end-to-end and that the GitHub Release for `v0.1.0` is created with `ResearchWithCodingAgentsSetup-v0.1.0.exe` and the other `dist/` assets attached.
+
+**Correction (see "Vendored Fork Correction" below): the `markplane.exe` fetch step described above downloaded the unmodified upstream binary. That is wrong for this repository, which ships a modified fork — see below.**
+
+## Antigravity Visual Panel 404 Root Cause 2026-08-05
+
+User relayed a bug report from a colleague (different machine, `schwarze` user) who used this project's installer with Antigravity: the Markplane visual panel/webview loaded blank. The colleague's own agent diagnosed it correctly: `markplane.exe serve` returns HTTP 404 for `/` and `/graph` because the binary was built without embedding the web UI (`crates/markplane-web/ui/out` not compiled in via the `embed-ui` Cargo feature), so the IDE's iframe has nothing to load. CLI/task-tracking/MCP functionality is unaffected — this is scoped to the visual panel only.
+
+Reproduced directly:
+
+- The official upstream `zerowand01/markplane` `v0.1.2` Windows release binary: `Serving embedded UI from binary`, `GET /` and `GET /graph` both `200`.
+- This machine's existing local `installer\windows\markplane.exe` (untracked, used to package any locally-built installer): `Serving static UI from crates/markplane-web/ui/out/`, both routes `404` — exact match for the colleague's bug. Confirms it was built via a plain `cargo install --path crates/markplane-cli` without `--features embed-ui`.
+- No test in the 100+ test Pester suite ever called `markplane serve` or checked its HTTP responses — a real coverage gap that let this ship unnoticed.
+- `installer/windows/README.md` documents `markplane.exe` as a prerequisite ("prebuilt Markplane binary with embedded web UI") but never states *how* to build one, which is how a plain `cargo install` (the simpler of the two commands documented in `components/markplane/CLAUDE.md`) could end up there.
+
+## Vendored Fork Correction 2026-08-05
+
+While proposing a CI fix for the above, the user pointed out that this repository does **not** ship stock upstream Markplane — `components/markplane` is their own lightly modified fork (confirmed: real independent dependency-version history via Dependabot, e.g. `tabled 0.21.0`/`tower-http 0.7.0`, diverging from whatever upstream `v0.1.2` pinned). `UPSTREAM.md`'s own "Vendored Snapshot Rule" already states network downloads must not replace the vendored source at install/repair/release-packaging time.
+
+This means the earlier same-day fix (downloading the official `zerowand01/markplane` `v0.1.2` release binary in CI to unblock the test suite) was solving the immediate CI failure but shipping the **wrong binary** — unmodified upstream instead of this repo's own fork. The currently published `v0.1.0` GitHub Release (created earlier today from that CI run) therefore ships upstream's unmodified `markplane.exe`, not this project's fork.
+
+Fix: replaced the CI "download prebuilt exe" step with a real build-from-source step in `.github/workflows/windows-release.yml`:
+
+- `actions/setup-node@v4` (Node 20, npm-cached) + `npm ci && npm run build` in `components/markplane/crates/markplane-web/ui` to produce the static export.
+- `Swatinem/rust-cache@v2` for the Cargo build cache.
+- `rustup update stable` (workspace MSRV is `1.93.0`) then `cargo build --release --features embed-ui -p markplane-cli` from `components/markplane`, copying the resulting `target\release\markplane.exe` to `installer\windows\markplane.exe` before tests and installer packaging run.
+
+Verified locally end-to-end (real build, not simulated): `npm ci` + `npm run build` produced `out/` including `/graph`; `cargo build --release --features embed-ui -p markplane-cli` finished in ~2m34s; the resulting binary reported `Serving embedded UI from binary` and returned `200` for both `/` and `/graph`.
+
+Added a regression test, `installer/windows/tests/MarkplaneWebUi.Tests.ps1`, that starts `markplane.exe serve` on an ephemeral port against a scratch project and asserts `/` and `/graph` both return `200`. Verified RED/GREEN in isolated sandboxes: fails (404) against the known-broken local exe, passes (200) against the properly-built one — so CI will now catch this regression class going forward. Per explicit user decision, the local untracked `installer\windows\markplane.exe` dev artifact on this machine was left as-is (not replaced), so the local full Pester run now shows 102 passed / 1 failed (only this new test, expected); it will pass in CI, which builds a fresh embed-ui binary before running tests.
+
+**Outstanding**: the live `v0.1.0` GitHub Release currently ships the wrong (unmodified upstream) `markplane.exe` built by the now-superseded CI step. Needs a re-run of the fixed workflow (move+push the `v0.1.0` tag again, or cut a new tag) to publish a release built from this repo's actual fork before this is safe to point real users at.
