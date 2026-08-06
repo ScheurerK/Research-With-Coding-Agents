@@ -38,11 +38,20 @@ function Start-MarkplaneServe {
     }
 
     if (-not $ready) {
-        if (-not $process.HasExited) { $process.Kill() }
+        Stop-MarkplaneServe -Process $process
         throw "markplane serve did not become reachable on port $Port within 15s"
     }
 
     return $process
+}
+
+function Stop-MarkplaneServe {
+    param([Parameter(Mandatory = $true)]$Process)
+
+    if (-not $Process.HasExited) {
+        $Process.Kill()
+        $Process.WaitForExit(5000) | Out-Null
+    }
 }
 
 function Get-StatusCode {
@@ -83,7 +92,7 @@ Describe "Markplane web UI embedding" {
             $rootStatus | Should Be 200
             $graphStatus | Should Be 200
         } finally {
-            if (-not $process.HasExited) { $process.Kill() }
+            Stop-MarkplaneServe -Process $process
         }
     }
 }
