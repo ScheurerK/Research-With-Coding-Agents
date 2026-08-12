@@ -69,10 +69,10 @@ as exploratory/disposable. Do not cite it, publish it, or build further
 experiments on top of it until it either gets a complete manifest and is
 re-verified, or is discarded.
 
-## Relationship to Migration/Restructuring (Rule 5)
+## Relationship to Migration/Restructuring (Rule 6)
 
 Changing where manifests live, their schema, or the experiment folder
 convention is itself a structural change to the repository and goes
 through the migration-and-sign-off process described in `SKILL.md`
-(Rule 5) — it is not something to change opportunistically while adding
+(Rule 6) — it is not something to change opportunistically while adding
 a single experiment.

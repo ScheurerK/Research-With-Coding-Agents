@@ -37,7 +37,7 @@ repo-root/
   file rather than overwriting; keep the old snapshot unless the
   repository owner explicitly approves removing it.
 - Large raw datasets are tracked via Git LFS/DVC or referenced by path to
-  external storage — not committed as plain blobs (see Rule 6 in
+  external storage — not committed as plain blobs (see Rule 7 in
   `SKILL.md`).
 
 ## `data/processed/` and `data/external/`
@@ -104,4 +104,4 @@ mapping explicitly in the root `AGENTS.md` so agents know which local
 folder plays which role, and apply the immutability/provenance/no-manual-edit
 rules to the folders that actually play those roles. Renaming an
 established layout to match this document is itself a major
-restructuring — it goes through the migration/sign-off process (Rule 5).
+restructuring — it goes through the migration/sign-off process (Rule 6).

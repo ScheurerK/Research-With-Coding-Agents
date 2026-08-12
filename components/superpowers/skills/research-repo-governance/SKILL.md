@@ -25,6 +25,7 @@ Use `research-checkpoint-commits` after this skill when the governed work become
 - Experiments need full provenance: commit, config, seed, dataset version, environment, and run command.
 - Notebooks are for exploration and narration; reusable or reproducible logic belongs in importable code.
 - Generated results are regenerated from code/config, never manually patched.
+- Generated reports and tables are self-contained: variable names, labels, units, samples, time periods, sources, and Table Notes must explain what a reader is seeing.
 - Major restructures require a migration plan and owner sign-off before execution.
 - Credentials, confidential data, participant-identifiable data, and large binaries do not belong in normal Git history.
 - Never overwrite an existing `AGENTS.md` or `CLAUDE.md`; generate only when missing and report skips.

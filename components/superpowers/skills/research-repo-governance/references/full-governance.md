@@ -22,9 +22,9 @@ Research repositories fail in specific, recurring ways: raw data gets
 silently overwritten, a result can no longer be reproduced because nobody
 recorded which commit or seed produced it, notebooks accumulate
 untestable business logic, generated tables get hand-edited to "fix" a
-number, and large restructurings break every collaborator's local
-checkout without warning. Each rule below exists to close one of these
-failure modes.
+number, reports use unexplained internal variable names, and large
+restructurings break every collaborator's local checkout without warning.
+Each rule below exists to close one of these failure modes.
 
 ## Canonical Repository Layout
 
@@ -112,7 +112,31 @@ disposable, not as evidence for a paper or report.
   to regenerate it would be a problem, the provenance in Rule 2 is
   incomplete.
 
-## Rule 5 — Migration Plan and Sign-off Before Major Restructuring
+## Rule 5 — Generated Reports and Tables Are Self-Contained
+
+Reports, tables, and other publication-facing outputs must explain what
+they show without relying on private project context or internal variable
+names. A reader should be able to copy the table into a paper draft and
+understand the represented quantities from the table title, labels, and
+notes alone.
+
+- Replace internal variable names with reader-facing labels, and provide
+  variable definitions for every displayed measure, coefficient, flag, or
+  statistic.
+- State units, scaling, transformations, and sign conventions where they
+  affect interpretation (for example percentages versus basis points,
+  log values, winsorization, or standardized coefficients).
+- Identify the sample, filters, time period, data source, and aggregation
+  level used to produce the table.
+- Include Table Notes for every generated table intended for reports,
+  papers, presentations, or external review. Notes define variables,
+  abbreviations, sample construction, statistical conventions, and any
+  caveats needed to interpret the table on its own.
+- If a report cannot name or define a displayed quantity, treat the
+  output as incomplete: fix the producing code/config and regenerate it
+  instead of patching labels or notes by hand.
+
+## Rule 6 — Migration Plan and Sign-off Before Major Restructuring
 
 Before a restructuring that moves, renames, or deletes a significant
 number of files (directory reorganizations, splitting/merging modules,
@@ -132,7 +156,7 @@ changing the canonical layout):
 Small, local reorganizations (e.g. splitting one file into two within the
 same directory) do not require this process — use judgment on "major."
 
-## Rule 6 — Protect Confidential Data and Large Binaries
+## Rule 7 — Protect Confidential Data and Large Binaries
 
 - Never commit credentials, API keys, participant-identifiable data, or
   other confidential material to the repository, including in notebook
@@ -205,10 +229,13 @@ content:
 - **Immutability / no manual edits** — for `data/` and `results/`,
   restate Rules 1 and 4 explicitly; agents frequently need this
   reminder before they "fix" a file directly.
+- **Self-contained outputs** — for `results/`, require readable variable
+  labels, variable definitions, units, sample/time-period/source
+  information, and Table Notes for publication-facing tables.
 - **Notebook boundary** — for `notebooks/`, restate Rule 3: what may live
   in a notebook and what must move to `code/`.
 - **Boundaries** — three-tier: ✅ always do / ⚠️ ask first / 🚫 never do,
-  populated from the six rules plus anything folder-specific (e.g.
+  populated from the governance rules plus anything folder-specific (e.g.
   "⚠️ ask first: adding a new top-level data source").
 
 ### CLAUDE.md Companion File
@@ -247,7 +274,7 @@ Same guard applies: check if `CLAUDE.md` exists before writing it.
    only the sections that apply.
 7. **Report** findings (missing manifests, raw-data writes, oversized
    committed files, layout deviations) without silently fixing them —
-   structural fixes go through Rule 5's migration process.
+   structural fixes go through Rule 6's migration process.
 
 ## Quality Principles
 
@@ -256,6 +283,7 @@ Same guard applies: check if `CLAUDE.md` exists before writing it.
 | **Specific** | "Raw data lives in `data/raw/xetra/`, one CSV per trading day" | "data folder" |
 | **Executable** | Manifest fields named exactly as the schema requires | "record how you ran it" |
 | **Grounded** | Point to a real `experiments/<run-id>/manifest.yaml` | Describe provenance in the abstract |
+| **Self-contained** | "Table Notes: `retail_share` is retail-flagged volume divided by total lit volume; sample is Xetra continuous trading, March 2026." | "retail_share" |
 | **Honest** | Omit the experiments section if the folder has none | Invent one anyway |
 | **Reversible-aware** | Flag a large restructuring for sign-off | Restructure silently mid-task |
 | **Concise** | 30–80 lines for most folder `AGENTS.md` files | 300+ lines of prose |
@@ -269,6 +297,9 @@ Same guard applies: check if `CLAUDE.md` exists before writing it.
   invisible to `code/`'s tests.
 - ❌ **Hand-editing a generated table or figure** — fix the pipeline,
   rerun it.
+- ❌ **Publishing tables with unexplained variable names** — generated
+  reports need reader-facing labels, variable definitions, units, sample,
+  time period, source, and Table Notes.
 - ❌ **Restructuring the repo as a side effect of an unrelated task** —
   needs its own migration plan and sign-off.
 - ❌ **Committing a credential, participant-identifiable record, or
