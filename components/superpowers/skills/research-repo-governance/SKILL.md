@@ -17,6 +17,8 @@ For quick compatibility or priority questions, this file is enough.
 
 Before generating or auditing `AGENTS.md`/`CLAUDE.md`, changing repository layout, reviewing data/results/notebooks/experiments, or proposing a migration, read `references/full-governance.md`. For concrete layouts, read `references/repository-layout.md`. For experiment manifests, read `references/experiment-provenance.md` and `templates/experiment-manifest.yaml`.
 
+For skill changes or audits of agent behavior under pressure, use the lightweight pressure scenarios in `tests/pressure-scenarios/` as manual/half-manual fixtures; they are not an automated LLM eval suite.
+
 Use `research-checkpoint-commits` after this skill when the governed work becomes a Markplane-owned scientific edit, staging decision, or Git commit.
 
 ## Core Rules

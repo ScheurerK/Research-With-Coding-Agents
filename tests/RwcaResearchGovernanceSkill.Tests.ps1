@@ -32,4 +32,32 @@ Describe "Research repository governance skill" {
         $repositoryLayout | Should Match "see Rule 7 in"
         $repositoryLayout | Should Match "sign-off process \(Rule 6\)"
         $experimentProvenance | Should Match "Migration/Restructuring \(Rule 6\)"
-    }}
+    }
+
+    It "ships lightweight pressure scenarios for research governance behavior" {
+        $skillRoot = Join-Path $script:repoRoot "components\superpowers\skills\research-repo-governance"
+        $scenarioRoot = Join-Path $skillRoot "tests\pressure-scenarios"
+        Test-Path -LiteralPath $scenarioRoot -PathType Container | Should Be $true
+
+        $scenarioFiles = @(
+            "quick-result-patch.md",
+            "exploration-artifact-promotion.md",
+            "bugfix-requires-red-test.md",
+            "unknown-empirical-output-invariants.md",
+            "non-python-exploration-surface.md"
+        )
+
+        foreach ($scenarioFile in $scenarioFiles) {
+            $path = Join-Path $scenarioRoot $scenarioFile
+            Test-Path -LiteralPath $path -PathType Leaf | Should Be $true
+            $content = Get-Content -Raw -LiteralPath $path
+
+            $content | Should Match "## Prompt"
+            $content | Should Match "## Expected Behavior"
+            $content | Should Match "## Failure Patterns"
+            $content | Should Match "## Gate"
+        }
+
+        (Get-Content -Raw -LiteralPath (Join-Path $skillRoot "SKILL.md")) | Should Match '`tests/pressure-scenarios/`'
+    }
+}
