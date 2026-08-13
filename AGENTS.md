@@ -9,5 +9,6 @@ Respect these boundaries:
 - Always preserve project `.markplane` directories and user extensions under `%USERPROFILE%\.research-with-coding-agents\extensions\`.
 - Ask before major repository moves, deleting generated artifacts that might be user-owned, or changing component fork history.
 - Never overwrite unrelated agent configuration, delete foreign Superpowers installations, or install the Markplane UI by copying extension folders.
+- When changing bundled skills under `components/superpowers/skills`, refresh every supported local agent target before completion: Codex and Claude via `installer/windows/Install-MarkplaneAgentSkills.ps1 -SkillSourceRoot ./components/superpowers/skills`, Gemini/Antigravity via `installer/windows/Install-AntigravityIntegration.ps1 -SkillSourceRoot ./components/superpowers/skills`, then run `installer/windows/Test-MarkplaneAgentSkills.ps1 -SkillSourceRoot ./components/superpowers/skills`.
 
 The public product is Research With Coding Agents. Markplane and Superpowers are core components with their own upstreams, histories, and licenses.
